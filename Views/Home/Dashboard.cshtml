@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Home Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+
+        .card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 12px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+            }
+
+        .container {
+            max-width: 900px;
+            margin-top: 50px;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-danger {
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-center">Home Dashboard</h2>
+                <p class="text-center">Welcome, User (ID: @ViewBag.Username)</p>
+
+                <div class="row">
+                    <div class="col-md-6 d-flex">
+                        <div class="card text-white bg-info mb-3 w-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Your Profile</h5>
+                                <p class="card-text">View and edit your profile details.</p>
+                                <a href="#" class="btn btn-light mt-auto">Go to Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex">
+                        <div class="card text-white bg-warning mb-3 w-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Your Orders</h5>
+                                <p class="card-text">View past and current orders.</p>
+                                <a href="#" class="btn btn-light mt-auto">Go to Orders</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Logout", "Login")" class="btn btn-danger">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

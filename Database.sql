@@ -1,38 +1,55 @@
-
+USE MASTER
 -- Xóa database hiện có nếu tồn tại
-DROP DATABASE IF EXISTS ShopEProduction;
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'ShopEProduction')
+BEGIN
+    DROP DATABASE ShopEProduction;
+END
+
+-- Tạo mới database
 CREATE DATABASE ShopEProduction;
+GO
+
+-- Chọn sử dụng database
 USE ShopEProduction;
+GO
 
 -- Bảng Roles để lưu trữ chức năng của người dùng
 CREATE TABLE ROLES (
-						ID INT AUTO_INCREMENT PRIMARY KEY,
-                       `ROLE_NAME` VARCHAR(50)
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    ROLE_NAME VARCHAR(50)
 );
--- inser data
-INSERT INTO `shopeproduction`.`roles` (`ROLE_NAME`)	VALUES('ADMIN'),('USER');
+GO
+
+-- Insert roles: Admin (ID = 1) and User (ID = 2)
+INSERT INTO ROLES (ROLE_NAME)
+VALUES ('Admin'), ('User');
+
 
 -- Tạo bảng Users
 CREATE TABLE USERS (
-	ID VARCHAR(20) PRIMARY KEY,
+    ID INT IDENTITY(1,1) PRIMARY KEY,  -- Auto-incrementing field starting at 1
     USERNAME VARCHAR(50) NOT NULL UNIQUE,
     PASSWORD VARCHAR(255) NOT NULL,
     FULLNAME VARCHAR(100),
     USER_IMAGE VARCHAR(255),
     EMAIL VARCHAR(100) NOT NULL UNIQUE,
     PHONENUMBER VARCHAR(20),
-    USER_CREATE_AT DATETIME DEFAULT CURRENT_TIMESTAMP, -- Change from TIMESTAMP to DATETIME
-    `USER_POINT` INT,
+    USER_CREATE_AT DATETIME DEFAULT GETDATE(),
+    USER_POINT INT,
     USER_ROLE_ID INT,
-    `USER_STATUS` BOOLEAN,
+    USER_STATUS BIT,  -- BIT used for boolean
     FOREIGN KEY (USER_ROLE_ID) REFERENCES ROLES(ID)
 );
+GO
 
-select * from users;
+-- Kiểm tra dữ liệu bảng USERS
+SELECT * FROM USERS;
+GO
 
--- insert data
--- INSERT INTO Users (USERNAME, PASSWORD, FULLNAME, USER_IMAGE, EMAIL, PHONENUMBER, USER_CREATE_AT, `USER_POINT`, USER_ROLE_ID, `USER_STATUS`)
--- VALUES
---     ('quan', '123456', 'Nguyen Tat Quan','local_image_quan', 'tatquan1803@gmail.com', '0837931504','2024-02-15 14:30:00', 10,1,1),
---     ('quannt', '123456', 'Nguyen Tat Quan','local_image_quannt', 'quannthe187203@fpt.edu.vn', '0829505619','2025-02-19 4:30:00', 2,2,1),
---     ('tatquan', '123456', 'Nguyen Tat Quan','local_image_tatquan', 'tatquan7203@outlook.com', '0837938956', NOW(), 2,1,1);
+-- Insert users with role assignments
+INSERT INTO USERS (USERNAME, PASSWORD, FULLNAME, USER_IMAGE, EMAIL, PHONENUMBER, USER_CREATE_AT, USER_POINT, USER_ROLE_ID, USER_STATUS)
+VALUES
+    ('quan', '123456', 'Nguyen Tat Quan', 'local_image_quan', 'tatquan1803@gmail.com', '0837931504', '2024-02-15 14:30:00', 10, 1, 1),  -- Admin
+    ('quannt', '123456', 'Nguyen Tat Quan', 'local_image_quannt', 'quan2@hotmail.com', '0829505619', '2025-02-19 04:30:00', 2, 2, 1),  -- User
+    ('tatquan', '123456', 'Nguyen Tat Quan', 'local_image_tatquan', 'quan1@outlook.com', '0837938956', GETDATE(), 2, 2, 1);  -- User
+

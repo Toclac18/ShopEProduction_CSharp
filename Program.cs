@@ -1,25 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using ShopEProduction.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddRazorPages();
+builder.Services.AddDbContext<ShopEproductionContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbContext"),
+    sqlOptions => sqlOptions.EnableRetryOnFailure())
+);
+
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddDistributedMemoryCache(); // In-memory session store
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-
+app.UseSession(); // Enable session middleware
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Login}/{action=Login}/{id?}");
 
 app.Run();
