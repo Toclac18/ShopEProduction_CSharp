@@ -50,6 +50,6 @@ GO
 INSERT INTO USERS (USERNAME, PASSWORD, FULLNAME, USER_IMAGE, EMAIL, PHONENUMBER, USER_CREATE_AT, USER_POINT, USER_ROLE_ID, USER_STATUS)
 VALUES
     ('quan', '123456', 'Nguyen Tat Quan', 'local_image_quan', 'tatquan1803@gmail.com', '0837931504', '2024-02-15 14:30:00', 10, 1, 1),  -- Admin
-    ('quannt', '123456', 'Nguyen Tat Quan', 'local_image_quannt', 'quan2@hotmail.com', '0829505619', '2025-02-19 04:30:00', 2, 2, 1),  -- User
+    ('quannt', '123456', 'Nguyen Tat Quan', 'local_image_quannt', 'quan2@hotmail.com', '0829505619', '2025-02-19 04:30:00', 2, 2, 0),  -- User
     ('tatquan', '123456', 'Nguyen Tat Quan', 'local_image_tatquan', 'quan1@outlook.com', '0837938956', GETDATE(), 2, 2, 1);  -- User
 

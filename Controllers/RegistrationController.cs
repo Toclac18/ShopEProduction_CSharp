@@ -20,13 +20,10 @@ namespace ShopEProduction.Controllers
         }
 
         [HttpPost]
+
         public async Task<IActionResult> createNewUser(User user)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View("Registration", user); // Return the form if validation fails
-            //}
-
+            
             var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(user.Username);
             if (existingUserByUsername != null)
             {
@@ -48,13 +45,26 @@ namespace ShopEProduction.Controllers
                 return View("Registration", user);
             }
 
-            user.UserCreateAt = DateTime.UtcNow;
-            user.UserStatus = true;
+            User u = new User();
+            Console.WriteLine(" Input: " + user.Username);
+            Console.WriteLine(" Input: " + user.Email);
+            Console.WriteLine(" Input: " + user.Password);
+            Console.WriteLine(" Input: " + user.Fullname);
+            Console.WriteLine(" Input: " + user.Phonenumber);
+
+            u.Username = user.Username;
+            u.Password = user.Password;
+            u.Fullname = user.Fullname;
+            u.UserImage = "local_image";
+            u.Email = user.Email;
+            u.Phonenumber = user.Phonenumber;
+            u.UserCreateAt = DateTime.Now;
+            u.UserPoint = 0;
+            u.UserRoleId = 2; //Default is User with role 2
+            u.UserStatus = true;
 
             // Save the user to the database
-            await _userRepository.RegisterUserAsync(user);
-
-            TempData["SuccessMessage"] = "Registration successful! Please login.";
+            await _userRepository.RegisterUserAsync(u);
 
             return RedirectToAction("Login", "Login");
         }

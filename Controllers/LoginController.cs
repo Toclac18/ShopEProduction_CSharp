@@ -42,7 +42,11 @@ namespace ShopEProduction.Controllers
 
             if (loginUser != null)
             {
-                Console.WriteLine(loginUser);
+                if(!(bool)loginUser.UserStatus)
+                {
+                    ViewBag.Message = "User is currently inactive! Please contact to active your account!";
+                    return View(user);
+                }
                 HttpContext.Session.SetString("userId", loginUser.Id.ToString());
                 HttpContext.Session.SetString("userRole", loginUser.UserRoleId.ToString());
                 if (loginUser.UserRoleId == 1)

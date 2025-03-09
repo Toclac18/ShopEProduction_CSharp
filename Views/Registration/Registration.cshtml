@@ -103,43 +103,33 @@
             <div class="alert alert-danger text-center">@ViewBag.Message</div>
         }
 
-        @if (TempData["SuccessMessage"] != null)
-        {
-            <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
-        }
-
-        <form asp-controller="Registration" asp-action="createNewUser" method="post">
+        <form action="@Url.Action("createNewUser", "Registration")" method="post">
             <!-- Username -->
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                <input asp-for="Username" class="form-control" placeholder="Enter your username" required />
+            <div class="input-group">                         
+                <input name="Username" class="form-control" placeholder="Enter your username" required />
             </div>
             <span asp-validation-for="Username" class="text-warning small"></span>
 
             <!-- Email -->
             <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email" required />
+                <input name="Email" type="email" class="form-control" placeholder="Enter your email" required />
             </div>
             <span asp-validation-for="Email" class="text-warning small"></span>
 
             <!-- Password -->
             <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required />
+                <input name="Password" type="password" class="form-control" placeholder="Enter your password" required />
             </div>
             <span asp-validation-for="Password" class="text-warning small"></span>
 
             <!-- Full Name -->
             <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
-                <input asp-for="Fullname" class="form-control" placeholder="Full Name" />
+                <input name="Fullname" class="form-control" placeholder="Full Name" />
             </div>
 
             <!-- Phone Number -->
             <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                <input asp-for="Phonenumber" class="form-control" placeholder="Phone Number" />
+                <input name="Phonenumber" class="form-control" placeholder="Phone Number" />
             </div>
 
             <!-- Submit Button -->
