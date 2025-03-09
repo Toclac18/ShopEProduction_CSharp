@@ -1,0 +1,161 @@
+﻿@model ShopEProduction.Models.User
+@{
+    ViewData["Title"] = "Create Your Own Account";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        /* Background Styling */
+        body {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Card Styling */
+        .card-form {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+        }
+
+        /* Input Fields */
+        .form-control {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: darkred;
+            border-radius: 8px;
+            padding: 10px;
+            transition: all 0.2s ease;
+        }
+
+            .form-control::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .form-control:focus {
+                background: rgba(255, 255, 255, 0.5);
+                box-shadow: 0 2px 10px rgba(255, 255, 255, 0.2);
+                color: brown;
+                outline: none;
+                transform: scale(1.02);
+            }
+
+        /* Input Group */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            background: linear-gradient(45deg, #ff9966, #ff5e62);
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+            color: white;
+            width: 100%;
+        }
+
+            .btn-submit:hover {
+                transform: scale(1.05);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            }
+
+        /* Links */
+        .text-links a {
+            color: #ff9966;
+            text-decoration: none;
+            transition: 0.2s ease-in-out;
+        }
+
+            .text-links a:hover {
+                text-decoration: underline;
+                color: #ff5e62;
+            }
+    </style>
+</head>
+<body>
+    <div class="card-form">
+        <h2 class="fw-bold mb-3">Create Your Account</h2>
+
+        <!-- Display Success or Error Messages -->
+        @if (!string.IsNullOrEmpty(ViewBag.Message))
+        {
+            <div class="alert alert-danger text-center">@ViewBag.Message</div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+        }
+
+        <form asp-controller="Registration" asp-action="createNewUser" method="post">
+            <!-- Username -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input asp-for="Username" class="form-control" placeholder="Enter your username" required />
+            </div>
+            <span asp-validation-for="Username" class="text-warning small"></span>
+
+            <!-- Email -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                <input asp-for="Email" type="email" class="form-control" placeholder="Enter your email" required />
+            </div>
+            <span asp-validation-for="Email" class="text-warning small"></span>
+
+            <!-- Password -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" required />
+            </div>
+            <span asp-validation-for="Password" class="text-warning small"></span>
+
+            <!-- Full Name -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person-circle"></i></span>
+                <input asp-for="Fullname" class="form-control" placeholder="Full Name" />
+            </div>
+
+            <!-- Phone Number -->
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                <input asp-for="Phonenumber" class="form-control" placeholder="Phone Number" />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-submit">Register</button>
+        </form>
+
+        <p class="text-center mt-3 text-links">
+            Already have an account? <a href="@Url.Action("Login", "Login")" class="fw-bold">Login</a>
+        </p>
+    </div>
+
+    @Html.Partial("_Footer")
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>
+

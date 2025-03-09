@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using ShopEProduction.Models;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ShopEProduction.Controllers
 {
