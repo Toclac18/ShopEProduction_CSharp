@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShopEProduction.Models;
+using ShopEProduction.Security.Password;
 
 namespace ShopEProduction.Controllers
 {
@@ -7,6 +8,7 @@ namespace ShopEProduction.Controllers
     {
         private readonly ShopEproductionContext _context;
         private readonly IConfiguration _config;
+        PasswordPBKDF2 _passwordPBKDF2 = new PasswordPBKDF2();
 
         public LoginController(ShopEproductionContext context, IConfiguration config)
         {
@@ -38,27 +40,33 @@ namespace ShopEProduction.Controllers
             }
 
             var loginUser = _context.Users.FirstOrDefault(u =>
-                u.Username == user.Username && u.Password == user.Password);
+                string.Equals(u.Username, user.Username));
 
             if (loginUser != null)
             {
-                if(!(bool)loginUser.UserStatus)
+                if(_passwordPBKDF2.VerifyPasswordPBKDF2(user.Password, loginUser.Password))
                 {
-                    ViewBag.Message = "User is currently inactive! Please contact to active your account!";
-                    return View(user);
+                    if (!(bool)loginUser.UserStatus)
+                    {
+                        ViewBag.Message = "User is currently inactive! Please contact to active your account!";
+                        return View(user);
+                    }
+                    HttpContext.Session.SetString("userId", loginUser.Id.ToString());
+                    HttpContext.Session.SetString("userRole", loginUser.UserRoleId.ToString());
+                    HttpContext.Session.SetString("userName", loginUser.Fullname);
+                    if (loginUser.UserRoleId == 1)
+                    {
+                        return RedirectToAction("Dashboard", "Admin");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Dashboard", "Home"); // Redirect Users
+                    }
                 }
-                HttpContext.Session.SetString("userId", loginUser.Id.ToString());
-                HttpContext.Session.SetString("userRole", loginUser.UserRoleId.ToString());
-                if (loginUser.UserRoleId == 1)
-                {
-                    return RedirectToAction("Dashboard", "Admin");
-                } else
-                {
-                    return RedirectToAction("Dashboard", "Home"); // Redirect Users
-                }
+                ViewBag.Message = "Wrong password!!! Please try again.";
+                return View(user);
             }
-
-            ViewBag.Message = "Invalid Username or Password!";
+            ViewBag.Message = "Invalid Username! Please try again.";
             return View(user);
         }
 
@@ -66,7 +74,7 @@ namespace ShopEProduction.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login", "Login");
+            return RedirectToAction("Dashboard", "Home");
         }
     }
 }

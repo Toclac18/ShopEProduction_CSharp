@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
+using ShopEProduction.Security.Password;
 
 namespace ShopEProduction.Controllers
 {
     public class RegistrationController : Controller
     {
         private readonly IUserRepository _userRepository;
+        //private readonly PasswordPBKDF2 _passwordPBKDF2;
+        PasswordPBKDF2 _passwordPBKDF2 = new PasswordPBKDF2();
 
         public RegistrationController(IUserRepository userRepository)
         {
@@ -53,7 +56,8 @@ namespace ShopEProduction.Controllers
             Console.WriteLine(" Input: " + user.Phonenumber);
 
             u.Username = user.Username;
-            u.Password = user.Password;
+            byte[] salt = _passwordPBKDF2.GenerateSalt();
+            u.Password = _passwordPBKDF2.HashPasswordPBKDF2(user.Password, salt);
             u.Fullname = user.Fullname;
             u.UserImage = "local_image";
             u.Email = user.Email;

@@ -1,5 +1,104 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    bool isLogged = Context.Session.GetString("userId") != null ? true : false;
 }
+<header class="header">
+    <div class="text">
+        <a href="@Url.Action("Dashboard", "Home")" class="text-home">Welcome to ShopEProduction _ ECommerce Platform.</a>
+        @if(!isLogged)
+        {
+            <a href="@Url.Action("Login", "Login")" class="btn-login">Login</a>
+        } else
+        {
+            <div class="text">
+                <a href="@Url.Action("Logout", "Login")" class="btn-logout">Logout</a>
+                <a href="@Url.Action("Dashboard", "Home")" class="btn-home">Home</a>
+                <a href="#" class="btn-wallet">My E_Wallet</a>
+                <a href="#" class="btn-cart">My Cart</a>
+                <a href="#" class="btn-profile">Profile</a>
+            </div>
+        }
+    </div>
+</header>
+
+<style>
+    .header {
+        position: fixed;
+        top: 0px;
+        background-color: coral;
+        width: 100%;
+        height: 70px;
+        border-radius: 8px;
+        margin: 0px 10px 10px 10px;
+        z-index: 1000;
+    }
+
+    .text {
+        text-align: center;
+        gap: 50px;
+    }
+    
+    .text-home {
+        text-decoration: none;
+        color: black;
+        margin-right: 130px;
+        font-size: larger;
+    }
+
+    .btn-logout {
+        text-decoration: none;
+        color: black;
+    }
+        .btn-logout:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+
+    .btn-login {
+        text-decoration: none;
+        color: black;
+    }
+
+        .btn-login:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+
+    .btn-home {
+        text-decoration: none;
+        color: black;
+    }
+        .btn-home:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+
+    .btn-profile {
+        text-decoration: none;
+        color: black;
+    }
+
+        .btn-profile:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+
+    .btn-wallet {
+        text-decoration: none;
+        color: black;
+    }
+
+        .btn-wallet:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+
+    .btn-cart {
+        text-decoration: none;
+        color: black;
+    }
+
+        .btn-cart:hover {
+            text-decoration: dashed;
+            color: darkred;
+        }
+</style>
