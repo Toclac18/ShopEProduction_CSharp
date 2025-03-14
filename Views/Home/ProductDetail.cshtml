@@ -1,0 +1,114 @@
+﻿@model List<ShopEProduction.Models.ProductDetail>
+
+@{
+    ViewData["Title"] = "Product Details";
+    var product = ViewBag.Product as ShopEProduction.Models.Product;
+    var isLogged = ViewBag.IsLogged as bool? ?? false;
+}
+@if(isLogged)
+{
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0 rounded-lg p-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center">
+                    <img src="https://via.placeholder.com/350" alt="@product.Name"
+                    class="img-fluid rounded product-image shadow-sm">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="text-primary fw-bold">@product.Name</h2>
+                    <p class="text-muted">Sold: <strong>@product.SoldNumber</strong></p>
+                    <p>
+                        <strong>Status: </strong>
+                        <span class="badge @(product.Status ?? false ? "bg-success" : "bg-danger")">
+                            @(product.Status ?? false ? "Available" : "Out of Stock")
+                        </span>
+                    </p>
+
+                    <a asp-controller="Home" asp-action="Home" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-5">
+            <h3 class="text-center text-primary">📌 Product Details</h3>
+            <table class="table table-hover shadow-sm rounded">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Detail Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model)
+                    {
+                        <tr>
+                            <td>@detail.DetailDesc</td>
+                            <td>
+                                <span class="badge @(detail.Status ?? false ? "bg-success" : "bg-danger")">
+                                    @(detail.Status ?? false ? "Available" : "Sold")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <style>
+        /* Custom Styling */
+        .card {
+        background: #ffffff;
+        border-radius: 10px;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        border-radius: 10px;
+        transition: transform 0.3s ease-in-out;
+        }
+
+        .product-image:hover {
+        transform: scale(1.05);
+        }
+
+        .badge {
+        font-size: 1rem;
+        padding: 8px 12px;
+        border-radius: 12px;
+        }
+
+        .btn-outline-secondary {
+        transition: all 0.3s ease-in-out;
+        }
+
+        .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+        }
+
+        .table {
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
+        }
+
+        .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.2s ease-in-out;
+        }
+    </style>
+} else
+{
+	ViewBag.ErrorMessage = "You need to login to view this page.";
+}

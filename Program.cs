@@ -6,7 +6,7 @@ using ShopEProduction.Repository.IRepository;
 var builder = WebApplication.CreateBuilder(args);
 
 // onfigure Database Connection
-builder.Services.AddDbContext<ShopEproductionContext>(options =>
+builder.Services.AddDbContext<ShopEProductionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbContext"),
     sqlOptions => sqlOptions.EnableRetryOnFailure())
 );
@@ -22,7 +22,11 @@ builder.Services.AddSession(options =>
 });
 
 // Register Repository with DI
-builder.Services.AddScoped<IUserRepository, UserRepository>(); // FIXED
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddScoped<IProductDetailRepository, ProductDetailRepository>();
 
 var app = builder.Build();
 
@@ -39,7 +43,7 @@ app.UseAuthorization();
 // Ensure Routes Are Configured Correctly
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Login}/{id?}"
+    pattern: "{controller=Home}/{action=Home}/{id?}"
 );
 
 app.Run();

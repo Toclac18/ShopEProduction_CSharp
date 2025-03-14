@@ -1,0 +1,82 @@
+﻿@model List<ShopEProduction.Models.Product>
+
+@{
+    ViewData["Title"] = "All Products";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">🛍️ All Products</h2>
+
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark fw-bold">@product.Name</h5>
+                        <p class="card-text">
+                            <strong>Sold:</strong> @product.SoldNumber <br>
+                            <strong>Status:</strong>
+                            <span class="badge @(product.Status ?? false ? "bg-success" : "bg-danger")">
+                                @(product.Status ?? false ? "Available" : "Out of Stock")
+                            </span>
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-primary btn-sm view-details-btn"
+                                    data-id="@product.Id">
+                                <i class="fas fa-info-circle"></i> View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- JavaScript to Handle Button Click -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".view-details-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let productId = this.getAttribute("data-id");
+                if (productId) {
+                    window.location.href = `/Home/ProductDetail/${productId}`;
+                }
+            });
+        });
+    });
+</script>
+
+
+<style>
+    /* Custom Styling */
+    .row {
+		margin: 0 30px;
+    }
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        border-radius: 10px;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.9);
+        }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        border-radius: 12px;
+    }
+
+    .btn-outline-primary {
+        transition: all 0.3s ease-in-out;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: white;
+        }
+</style>

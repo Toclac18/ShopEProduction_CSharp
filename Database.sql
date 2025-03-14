@@ -46,10 +46,30 @@ GO
 SELECT * FROM USERS;
 GO
 
--- Insert users with role assignments
-INSERT INTO USERS (USERNAME, PASSWORD, FULLNAME, USER_IMAGE, EMAIL, PHONENUMBER, USER_CREATE_AT, USER_POINT, USER_ROLE_ID, USER_STATUS)
-VALUES
-    ('quan', '123456', 'Nguyen Tat Quan', 'local_image_quan', 'tatquan1803@gmail.com', '0837931504', '2024-02-15 14:30:00', 10, 1, 1),  -- Admin
-    ('quannt', '123456', 'Nguyen Tat Quan', 'local_image_quannt', 'quan2@hotmail.com', '0829505619', '2025-02-19 04:30:00', 2, 2, 0),  -- User
-    ('tatquan', '123456', 'Nguyen Tat Quan', 'local_image_tatquan', 'quan1@outlook.com', '0837938956', GETDATE(), 2, 2, 1);  -- User
 
+-- Create table Categories
+CREATE TABLE CATEGORIES (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    CATEGORY_NAME VARCHAR(100) UNIQUE NOT NULL,  -- Ensures no duplicate category names
+    DESCRIPTION TEXT,  -- Additional details about the category
+    STATUS BIT DEFAULT 1 -- 1 = Active, 0 = Inactive
+);
+
+-- Create Products Table
+CREATE TABLE PRODUCTS (
+    ID INT IDENTITY(1,1) PRIMARY KEY, -- Auto increment for better ID management
+    NAME VARCHAR(100) NOT NULL,  -- Increased size for more flexibility
+    PRODUCT_CATEGORY INT NOT NULL,  -- Renamed for clarity
+    SOLD_NUMBER INT DEFAULT 0,  -- Fixed typo and added default value
+    STATUS BIT DEFAULT 1, -- 1 = available, 0 = out of stock
+    CONSTRAINT FK_PRODUCT_CATEGORY FOREIGN KEY (PRODUCT_CATEGORY) REFERENCES CATEGORIES(ID)
+);
+
+-- Create Product Details Table
+CREATE TABLE PRODUCT_DETAILS (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    PRODUCT_ID INT NOT NULL,
+    DETAIL_DESC NVARCHAR(255),
+    STATUS BIT DEFAULT 1, -- 1 = available, 0 = sold
+    FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCTS(ID) ON DELETE CASCADE
+);

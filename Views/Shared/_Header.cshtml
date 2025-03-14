@@ -1,21 +1,38 @@
 ﻿@{
     bool isLogged = Context.Session.GetString("userId") != null ? true : false;
+    bool isAdminLogged = Context.Session.GetString("userRoleId") == "1" ? true : false;
 }
 <header class="header">
     <div class="text">
-        <a href="@Url.Action("Dashboard", "Home")" class="text-home">Welcome to ShopEProduction _ ECommerce Platform.</a>
         @if(!isLogged)
         {
-            <a href="@Url.Action("Login", "Login")" class="btn-login">Login</a>
-        } else
-        {
             <div class="text">
-                <a href="@Url.Action("Logout", "Login")" class="btn-logout">Logout</a>
-                <a href="@Url.Action("Dashboard", "Home")" class="btn-home">Home</a>
-                <a href="#" class="btn-wallet">My E_Wallet</a>
-                <a href="#" class="btn-cart">My Cart</a>
-                <a href="#" class="btn-profile">Profile</a>
+                <a href="@Url.Action("Home", "Home")" class="text-home">Welcome to ShopEProduction _ ECommerce Platform.</a>
+                <a href="@Url.Action("Login", "Login")" class="btn-login">Login</a>
             </div>
+            
+        } else 
+        {
+            if(!isAdminLogged) {
+                <a href="@Url.Action("Dashboard", "Home")" class="text-home">Welcome to ShopEProduction _ ECommerce Platform.</a>
+                <div class="text">
+                    <a href="@Url.Action("Logout", "Login")" class="btn-logout">Logout</a>
+                    <a href="@Url.Action("Dashboard", "Home")" class="btn-home">Home</a>
+                    <a href="#" class="btn-wallet">My E_Wallet</a>
+                    <a href="#" class="btn-cart">My Cart</a>
+                    <a href="#" class="btn-profile">Profile</a>
+                </div>
+            }  else
+            {
+                <a href="@Url.Action("Dashboard", "Admin")" class="text-home">Welcome to ShopEProduction _ ECommerce Platform.</a>
+                <div class="text">
+                    <a href="@Url.Action("Logout", "Login")" class="btn-logout">Logout</a>
+                    <a href="@Url.Action("Dashboard", "Admin")" class="btn-home">Home</a>
+                    <a href="#" class="btn-wallet">Users Management</a>
+                    <a href="#" class="btn-cart">Warehouse</a>
+                    <a href="#" class="btn-profile">Profile</a>
+                </div>
+            }
         }
     </div>
 </header>
@@ -41,7 +58,6 @@
         text-decoration: none;
         color: black;
         margin-right: 130px;
-        font-size: larger;
     }
 
     .btn-logout {

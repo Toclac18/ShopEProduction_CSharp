@@ -6,11 +6,11 @@ namespace ShopEProduction.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ShopEproductionContext _context;
+        private readonly ShopEProductionContext _context;
         private readonly IConfiguration _config;
         PasswordPBKDF2 _passwordPBKDF2 = new PasswordPBKDF2();
 
-        public LoginController(ShopEproductionContext context, IConfiguration config)
+        public LoginController(ShopEProductionContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
@@ -34,7 +34,7 @@ namespace ShopEProduction.Controllers
             if (user.Username == adminEmail && user.Password == adminPassword)
             {
                 HttpContext.Session.SetString("userId", "0");
-                HttpContext.Session.SetString("userRole", "1");
+                HttpContext.Session.SetString("userRoleId", "1");
 
                 return RedirectToAction("Dashboard", "Admin"); // Redirect Admins
             }
@@ -52,7 +52,7 @@ namespace ShopEProduction.Controllers
                         return View(user);
                     }
                     HttpContext.Session.SetString("userId", loginUser.Id.ToString());
-                    HttpContext.Session.SetString("userRole", loginUser.UserRoleId.ToString());
+                    HttpContext.Session.SetString("userRoleId", loginUser.UserRoleId.ToString());
                     HttpContext.Session.SetString("userName", loginUser.Fullname);
                     if (loginUser.UserRoleId == 1)
                     {

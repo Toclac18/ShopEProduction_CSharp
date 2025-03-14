@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ShopEProduction.Models;
 
@@ -8,11 +7,8 @@ public partial class User
 {
     public int Id { get; set; }
 
-    [Required(ErrorMessage = "Username is required.")]
     public string Username { get; set; } = null!;
 
-    [Required(ErrorMessage = "Password is required.")]
-    [DataType(DataType.Password)]
     public string Password { get; set; } = null!;
 
     public string? Fullname { get; set; }

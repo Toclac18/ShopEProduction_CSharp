@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
-using System.Threading.Tasks;
 
 namespace ShopEProduction.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ShopEproductionContext _context;
+        private readonly ShopEProductionContext _context;
 
-        public UserRepository(ShopEproductionContext context)
+        public UserRepository(ShopEProductionContext context)
         {
             _context = context;
         }
