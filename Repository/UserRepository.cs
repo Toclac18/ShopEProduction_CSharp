@@ -6,9 +6,9 @@ namespace ShopEProduction.Repository
 {
     public class UserRepository : IUserRepository
     {
-        private readonly ShopEProductionContext _context;
+        private readonly ShopEproductionContext _context;
 
-        public UserRepository(ShopEProductionContext context)
+        public UserRepository(ShopEproductionContext context)
         {
             _context = context;
         }

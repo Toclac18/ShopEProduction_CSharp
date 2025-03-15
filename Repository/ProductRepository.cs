@@ -6,8 +6,8 @@ namespace ShopEProduction.Repository
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ShopEProductionContext _context;
-        public ProductRepository(ShopEProductionContext context)
+        private readonly ShopEproductionContext _context;
+        public ProductRepository(ShopEproductionContext context)
         {
             _context = context;
         }
@@ -22,9 +22,5 @@ namespace ShopEProduction.Repository
             return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<ProductDetail>> GetProductDetailsAsync(int productId)
-        {
-            return await _context.ProductDetails.Where(pd => pd.ProductId == productId).ToListAsync();
-        }
     }
 }

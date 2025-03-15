@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
 
 namespace ShopEProduction.Controllers
@@ -6,10 +7,12 @@ namespace ShopEProduction.Controllers
     public class HomeController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProductDetailRepository _productDetailRepository;
 
-        public HomeController(IProductRepository productRepository)
+        public HomeController(IProductRepository productRepository, IProductDetailRepository productDetailRepository)
         {
             _productRepository = productRepository;
+            _productDetailRepository = productDetailRepository;
         }
         public IActionResult Dashboard()
         {
@@ -26,18 +29,26 @@ namespace ShopEProduction.Controllers
         public async Task<IActionResult> Home()
         {
             var products = await _productRepository.GetAllProductsAsync();
+
             return View("Home", products);
         }
 
+
         public async Task<IActionResult> ProductDetail(int id)
         {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("userId")))
+            {
+                TempData["ErrorMessage"] = "Please login to view product details.";
+                return RedirectToAction("Home"); // Redirect to Home
+            }
             if (id <= 0)
             {
                 return BadRequest("Invalid product ID.");
             }
 
             var product = await _productRepository.GetProductByIdAsync(id);
-            var productDetails = await _productRepository.GetProductDetailsAsync(id);
+            var productDetails = await _productDetailRepository.GetAvailableProductDetailsAsync(id);
+            
 
             if (product == null)
             {
@@ -45,8 +56,11 @@ namespace ShopEProduction.Controllers
             }
 
             ViewBag.Product = product;
-            return View("ProductDetail", productDetails);
+            
+            return View(productDetails);
         }
+
+
 
     }
 }

@@ -9,13 +9,17 @@ public partial class Product
 
     public string Name { get; set; } = null!;
 
-    public int ProductCategory { get; set; }
+    public int CategoryId { get; set; }
 
     public int? SoldNumber { get; set; }
 
+    public int CurrentAvailable { get; set; }
+
+    public int Type { get; set; }
+
     public bool? Status { get; set; }
 
-    public virtual Category ProductCategoryNavigation { get; set; } = null!;
+    public virtual Category Category { get; set; } = null!;
 
     public virtual ICollection<ProductDetail> ProductDetails { get; set; } = new List<ProductDetail>();
 }

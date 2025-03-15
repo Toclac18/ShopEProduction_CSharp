@@ -8,15 +8,20 @@ namespace ShopEProduction.Repository
     public class ProductDetailRepository : IProductDetailRepository
     {
 
-        private readonly ShopEProductionContext _context;
+        private readonly ShopEproductionContext _context;
 
-        public ProductDetailRepository(ShopEProductionContext context)
+        public ProductDetailRepository(ShopEproductionContext context)
         {
             _context = context;
         }
         public async Task<List<ProductDetail>> getAllProductDetail()
         {
             return await _context.ProductDetails.ToListAsync(); 
+        }
+
+        public async Task<List<ProductDetail>> GetAvailableProductDetailsAsync(int productId)
+        {
+            return await _context.ProductDetails.Where(pd => pd.ProductId == productId && pd.Status == true).ToListAsync();
         }
     }
 }

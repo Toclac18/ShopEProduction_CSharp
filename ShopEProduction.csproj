@@ -8,6 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Assets\Images\1.jpg" />
+    <None Include="wwwroot\Assets\Images\Coursera.webp" />
+    <None Include="wwwroot\Assets\Images\5.jpg" />
+    <None Include="wwwroot\Assets\Images\login.jpg" />
+    <None Include="wwwroot\Assets\Images\7.jpg" />
+    <None Include="wwwroot\Assets\Images\3.jpg" />
+    <None Include="wwwroot\Assets\Images\8.jpg" />
+    <None Include="wwwroot\Assets\Images\4.jpg" />
+    <None Include="wwwroot\Assets\Images\6.jpg" />
+    <None Include="wwwroot\Assets\Images\2.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
       <PrivateAssets>all</PrivateAssets>

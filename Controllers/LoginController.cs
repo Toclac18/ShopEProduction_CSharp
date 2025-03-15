@@ -6,11 +6,11 @@ namespace ShopEProduction.Controllers
 {
     public class LoginController : Controller
     {
-        private readonly ShopEProductionContext _context;
+        private readonly ShopEproductionContext _context;
         private readonly IConfiguration _config;
         PasswordPBKDF2 _passwordPBKDF2 = new PasswordPBKDF2();
 
-        public LoginController(ShopEProductionContext context, IConfiguration config)
+        public LoginController(ShopEproductionContext context, IConfiguration config)
         {
             _context = context;
             _config = config;
@@ -76,5 +76,9 @@ namespace ShopEProduction.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Dashboard", "Home");
         }
+    }
+
+    public class ShopEProductionContext
+    {
     }
 }

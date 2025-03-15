@@ -6,7 +6,7 @@ using ShopEProduction.Repository.IRepository;
 var builder = WebApplication.CreateBuilder(args);
 
 // onfigure Database Connection
-builder.Services.AddDbContext<ShopEProductionContext>(options =>
+builder.Services.AddDbContext<ShopEproductionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbContext"),
     sqlOptions => sqlOptions.EnableRetryOnFailure())
 );
@@ -39,6 +39,8 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseStaticFiles(); // Serves static files like images, CSS, JS from the wwwroot folder
 
 // Ensure Routes Are Configured Correctly
 app.MapControllerRoute(
