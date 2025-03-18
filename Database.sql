@@ -60,13 +60,6 @@ CREATE TABLE CATEGORIES (
     STATUS BIT DEFAULT 1 -- 1 = Active, 0 = Inactive
 );
 
-INSERT INTO CATEGORIES (CATEGORY_NAME, DESCRIPTION) VALUES
-('Streaming Services', 'Netflix, YouTube Premium, Spotify, Disney+ accounts'),
-('Mobile Cards', 'Top-up cards for mobile networks such as Verizon, AT&T, T-Mobile'),
-('Gaming & Gift Cards', 'Google Play, App Store, Steam, PlayStation, Xbox gift cards'),
-('Software & Licenses', 'Windows, Microsoft Office, Antivirus, VPN subscriptions'),
-('E-books & Learning', 'Online courses, digital books, e-learning subscriptions');
-
 SELECT * FROM CATEGORIES;
 
 DROP TABLE PRODUCTS;
@@ -100,6 +93,28 @@ CREATE TABLE PRODUCT_DETAILS (
     FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCTS(ID) ON DELETE CASCADE
 );
 
+DROP TABLE CARTS
+-- Create table CARTS
+CREATE TABLE CARTS (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    USER_ID INT NOT NULL UNIQUE,  -- No UNIQUE constraint
+    FOREIGN KEY (USER_ID) REFERENCES USERS(ID)
+);
+
+DROP TABLE CART_ITEMS;
+-- Create table CART_ITEMS
+CREATE TABLE CART_ITEMS (
+    ID INT IDENTITY(1,1) PRIMARY KEY,
+    CART_ID INT NOT NULL,
+    PRODUCT_ID INT NOT NULL,
+    PRODUCT_DETAIL_ID INT NOT NULL,
+    PRODUCT_DETAIL_PRICE DECIMAL(18,2) NOT NULL,  -- Change FLOAT to DECIMAL
+    QUANTITY INT NOT NULL,
+    FOREIGN KEY (CART_ID) REFERENCES CARTS(ID),
+    FOREIGN KEY (PRODUCT_ID) REFERENCES PRODUCTS(ID),
+    FOREIGN KEY (PRODUCT_DETAIL_ID) REFERENCES PRODUCT_DETAILS(ID)
+);
+
 
 INSERT INTO PRODUCTS (NAME, CATEGORY_ID, SOLD_NUMBER, CURRENT_AVAILABLE, TYPE, STATUS) VALUES
 ('Netflix Account for limited time Subscription', 1, 50, 100, 1, 1), -- Rent item
@@ -112,20 +127,27 @@ INSERT INTO PRODUCTS (NAME, CATEGORY_ID, SOLD_NUMBER, CURRENT_AVAILABLE, TYPE, S
 ('Verizon $50 Mobile Card', 2, 10, 10, 0, 1), -- Sell item
 ('Verizon $100 Mobile Card', 2, 40, 18, 0, 1), -- Sell item
 ('Google Play $25 Gift Card', 3, 35, 20, 0, 1), -- Sell item
-('Google Play $25 Gift Card', 3, 35, 20, 0, 1), -- Sell item
+('Google Play $55 Gift Card', 3, 40, 5, 0, 1), -- Sell item
 ('Google Play $25 Gift Card', 3, 35, 20, 0, 0), -- Out of stock
-('Windows 11 Pro License Key', 4, 20, 5, 0, 1), -- Sell item
-('Windows 11 Pro License Key', 4, 20, 5, 0, 0), -- Out of stock
-('Windows 11 Pro License Key', 4, 20, 5, 0, 1), -- Sell item
+('Windows 10 Pro License Key', 4, 25, 10, 0, 1), -- Sell item
+('Windows 10 Pro License Key', 4, 20, 5, 0, 0), -- Out of stock
+('Windows 11 Pro License Key', 4, 10, 15, 0, 1), -- Sell item
 ('Windows 11 Pro License Key', 4, 20, 5, 0, 0), -- Out of stock
 ('Microsoft Office 365 Annual Plan', 4, 15, 25, 0, 1), -- Sell item
-('Microsoft Office 365 Annual Plan', 4, NULL, 25, 1, 1), -- Rent item (SOLD_NUMBER = NULL)
-('Microsoft Office 365 Annual Plan', 4, NULL, 25, 1, 1), -- Rent item (SOLD_NUMBER = NULL)
-('Microsoft Office 365 Annual Plan', 4, NULL, 25, 1, 1), -- Rent item (SOLD_NUMBER = NULL)
-('Udemy Online Course - Digital Marketing', 5, 10, 60, 0, 1), -- Sell item
-('Udemy Online Course - Digital Marketing', 5, 10, 60, 0, 1), -- Sell item
+('Microsoft Office 365 Annual Plan', 4, NULL, 30, 1, 1), -- Rent item (SOLD_NUMBER = NULL)
+('Udemy Online Course Standard Account - Digital Marketing', 5, 10, 60, 0, 1), -- Sell item
+('Udemy Online Course Premium Account - Digital Marketing', 5, 15, 20, 0, 1), -- Sell item
 ('Udemy Online Course - Digital Marketing For Rented User', 5, NULL, 60, 1, 1); -- Rent item (SOLD_NUMBER = NULL)
 
+SELECT * FROM PRODUCTS;
+
+--Insert data to table categories
+INSERT INTO CATEGORIES (CATEGORY_NAME, DESCRIPTION) VALUES
+('Streaming Services', 'Netflix, YouTube Premium, Spotify, Disney+ accounts'),
+('Mobile Cards', 'Top-up cards for mobile networks such as Verizon, AT&T, T-Mobile'),
+('Gaming & Gift Cards', 'Google Play, App Store, Steam, PlayStation, Xbox gift cards'),
+('Software & Licenses', 'Windows, Microsoft Office, Antivirus, VPN subscriptions'),
+('E-books & Learning', 'Online courses, digital books, e-learning subscriptions');
 
 -- Insert for Products in Table PRODUCT_DETAILS
 INSERT INTO PRODUCT_DETAILS (PRODUCT_ID, PRODUCT_TYPE, PRICE, RELEASE_DATE, EXPIRED_DATE, DETAIL_DESC, DETAIL_PRIVATE_DESC, DURATION, IS_RENTED_FLG, IS_BOUGHT_FLG, STATUS)
@@ -152,10 +174,11 @@ VALUES
 (19, 0, 100.00, NULL, NULL, 'Microsoft Office 365 Annual Plan. A complete Microsoft Office 365 annual subscription available for purchase.', 'Office 365 account details will be emailed.', NULL, NULL, 0, 1),
 (20, 0, 100.00, NULL, NULL, 'Microsoft Office 365 Annual Plan. Annual Microsoft Office 365 plan for sale.', 'Credentials sent to your email after purchase confirmation.', NULL, NULL, 0, 1),
 (21, 0, 50.00, NULL, NULL, 'Udemy Online Course - Digital Marketing. Online course in Digital Marketing available for sale.', 'Course access details will be emailed after purchase.', NULL, NULL, 0, 1),
-(22, 0, 50.00, NULL, NULL, 'Udemy Online Course - Digital Marketing. Udemy Digital Marketing course available for purchase.', 'Course login details will be sent to you via email.', NULL, NULL, 0, 1),
-
 -- For rented items (PRODUCT_TYPE = 1)
 (1, 1, 10.00, NULL, NULL, 'Udemy Online Course - Digital Marketing For Rented User. Rent this Udemy Digital Marketing course for a limited period.', 'Renting access details will be sent after payment confirmation.', NULL, 0, NULL, 1),
 (2, 1, 12.00, NULL, NULL, 'YouTube Premium for rented demands. Rent YouTube Premium subscription for a period.', 'Login details for rental will be sent after confirmation.', NULL, 0, NULL, 1),
 (3, 1, 20.00, NULL, NULL, 'Netflix Account for limited time Subscription. Rent Netflix account for a limited time subscription.', 'Login details sent upon successful rental.', NULL, 0, NULL, 1);
 
+SELECT * FROM PRODUCT_DETAILS;
+SELECT * FROM CARTS;
+SELECT * FROM CART_ITEMS;

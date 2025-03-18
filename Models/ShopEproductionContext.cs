@@ -15,6 +15,10 @@ public partial class ShopEproductionContext : DbContext
     {
     }
 
+    public virtual DbSet<Cart> Carts { get; set; }
+
+    public virtual DbSet<CartItem> CartItems { get; set; }
+
     public virtual DbSet<Category> Categories { get; set; }
 
     public virtual DbSet<Product> Products { get; set; }
@@ -27,10 +31,61 @@ public partial class ShopEproductionContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("server =QuanNT18; database = ShopEProduction;uid=sa;pwd=123456;TrustServerCertificate=True;");
+        => optionsBuilder.UseSqlServer("server=QuanNT18;database=ShopEProduction;uid=sa;pwd=123456;TrustServerCertificate=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CARTS__3214EC270A1D37E9");
+
+            entity.ToTable("CARTS");
+
+            entity.HasIndex(e => e.UserId, "UQ__CARTS__F3BEEBFE2BCACCB6").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithOne(p => p.Cart)
+                .HasForeignKey<Cart>(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CARTS__USER_ID__17036CC0");
+        });
+
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__CART_ITE__3214EC2765EE5BC8");
+
+            entity.ToTable("CART_ITEMS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CartId).HasColumnName("CART_ID");
+            entity.Property(e => e.ProductDetailId).HasColumnName("PRODUCT_DETAIL_ID");
+            entity.Property(e => e.ProductDetailName)
+                .HasMaxLength(255)
+                .HasColumnName("PRODUCT_DETAIL_NAME");
+            entity.Property(e => e.ProductDetailPrice)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("PRODUCT_DETAIL_PRICE");
+            entity.Property(e => e.ProductId).HasColumnName("PRODUCT_ID");
+            entity.Property(e => e.Quantity).HasColumnName("QUANTITY");
+
+            entity.HasOne(d => d.Cart).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.CartId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CART_ITEM__CART___2DE6D218");
+
+            entity.HasOne(d => d.ProductDetail).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.ProductDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CART_ITEM__PRODU__2FCF1A8A");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.CartItems)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__CART_ITEM__PRODU__2EDAF651");
+        });
+
         modelBuilder.Entity<Category>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__CATEGORI__3214EC27C4AE8295");
@@ -54,7 +109,7 @@ public partial class ShopEproductionContext : DbContext
 
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PRODUCTS__3214EC27775CE6F5");
+            entity.HasKey(e => e.Id).HasName("PK__PRODUCTS__3214EC27CEBFA887");
 
             entity.ToTable("PRODUCTS");
 
@@ -74,12 +129,12 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PRODUCTS__CATEGO__4D94879B");
+                .HasConstraintName("FK__PRODUCTS__CATEGO__5DCAEF64");
         });
 
         modelBuilder.Entity<ProductDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PRODUCT___3214EC2789AB05D4");
+            entity.HasKey(e => e.Id).HasName("PK__PRODUCT___3214EC278BFA915D");
 
             entity.ToTable("PRODUCT_DETAILS");
 
@@ -114,7 +169,7 @@ public partial class ShopEproductionContext : DbContext
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductDetails)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__PRODUCT_D__PRODU__534D60F1");
+                .HasConstraintName("FK__PRODUCT_D__PRODU__693CA210");
         });
 
         modelBuilder.Entity<Role>(entity =>

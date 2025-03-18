@@ -20,7 +20,7 @@
                     <a href="@Url.Action("Logout", "Login")" class="btn-logout">Logout</a>
                     <a href="@Url.Action("Dashboard", "Home")" class="btn-home">My Dashboard</a>
                     <a href="#" class="btn-wallet">My E_Wallet</a>
-                    <a href="#" class="btn-cart">My Cart</a>
+                    <a href="@Url.Action("ShowCart", "Cart")" class="btn-cart">My Cart</a>
                     <a href="#" class="btn-profile">Profile</a>
                 </div>
             </div>
@@ -46,6 +46,7 @@
         width: 100%;
         height: 70px;
         margin: 0px 10px 10px 0px;
+		z-index: 1000;
     }
 
     .text {
@@ -57,6 +58,11 @@
         color: black;
         margin-right: 130px;
     }
+
+		.text-home:hover {
+			text-decoration: dashed;
+			color: darkred;
+		}
 
     .btn-logout {
         text-decoration: none;

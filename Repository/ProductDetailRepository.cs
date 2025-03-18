@@ -23,5 +23,10 @@ namespace ShopEProduction.Repository
         {
             return await _context.ProductDetails.Where(pd => pd.ProductId == productId && pd.Status == true).ToListAsync();
         }
+
+        public async Task<ProductDetail> GetProductDetailByIdAsync(int productDetailId)
+        {
+            return await _context.ProductDetails.FirstOrDefaultAsync(pd => pd.Id == productDetailId);
+        }
     }
 }

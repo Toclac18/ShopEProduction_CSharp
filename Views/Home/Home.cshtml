@@ -14,7 +14,7 @@
     <style>
         /* Custom Styling */
         .container {
-            padding-top: 40px;
+            padding: 60px;
         }
 
         .card {
@@ -93,7 +93,16 @@
                                     @(product.Status ?? false ? "Available" : "Out of Stock")
                                 </span>
                                 <br>
-                                <strong>Availabe Quantity:</strong> @product.CurrentAvailable <br>
+                                <strong>Type: </strong>
+								@if (product.Type == 0)
+								{
+									<span class="badge bg-primary">For Sale</span>
+								}
+								else
+								{
+									<span class="badge bg-warning">For Rent</span>
+								}
+                                <br>
                             </p>
                             <div class="d-flex justify-content-between">
                                 <button class="btn btn-primary btn-sm view-details-btn"

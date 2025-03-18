@@ -27,5 +27,7 @@ public partial class User
 
     public bool? UserStatus { get; set; }
 
+    public virtual Cart? Cart { get; set; }
+
     public virtual Role? UserRole { get; set; }
 }

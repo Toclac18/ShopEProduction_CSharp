@@ -6,5 +6,6 @@ namespace ShopEProduction.Repository.IRepository
     {
         Task<List<ProductDetail>> getAllProductDetail();
         Task<List<ProductDetail>> GetAvailableProductDetailsAsync(int productId);
+        Task<ProductDetail> GetProductDetailByIdAsync(int productDetailId);
     }
 }

@@ -29,5 +29,7 @@ public partial class ProductDetail
 
     public bool? Status { get; set; }
 
+    public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
+
     public virtual Product Product { get; set; } = null!;
 }

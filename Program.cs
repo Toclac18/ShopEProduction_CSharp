@@ -28,6 +28,11 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 builder.Services.AddScoped<IProductDetailRepository, ProductDetailRepository>();
 
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+
+
 var app = builder.Build();
 
 // Enable Session

@@ -1,0 +1,251 @@
+﻿@model List<ShopEProduction.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin: 100px auto 50px auto;
+            max-width: 900px;
+        }
+
+        .cart-header {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .cart-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-in-out;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+            .cart-card:hover {
+                transform: scale(1.02);
+                box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+        }
+
+        .product-details {
+            flex-grow: 1;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        .product-price {
+            font-size: 16px;
+            color: #28a745;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+			display: flex;
+			justify-content: center;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s ease-in-out;
+			margin: 0 5px;
+        }
+
+            .quantity-btn:hover {
+                background-color: #0056b3;
+            }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            font-size: 16px;
+            margin: 0 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        .select-item {
+			margin-right: 15px;
+            cursor: pointer;
+        }
+
+        .total-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #dc3545;
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .btn-buy {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.3s ease-in-out;
+        }
+
+            .btn-buy:hover {
+                background-color: #218838;
+            }
+
+        .btn-remove {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-under {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 20px;
+		}
+
+    </style>
+</head>
+<body>
+	@Html.Partial("_Header")
+    <div class="container">
+        <h2 class="cart-header">🛒 Shopping Cart</h2>
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info text-center">Your cart is empty!</div>
+        }
+        else
+        {
+            <div>
+                <button class="btn btn-secondary mb-3" id="selectAllBtn">Select All</button>
+
+                @foreach (var item in Model)
+                {
+                    <div class="cart-card">
+                        <input type="checkbox" class="select-item" data-price="@item.ProductDetailPrice" data-quantity="@item.Quantity">
+
+                        <img src="@Url.Content("~/Assets/Images/" + item.ProductId + ".jpg")" class="product-image" alt="@item.ProductDetailName">
+
+                        <div class="product-details">
+                            <p class="product-name">@item.ProductDetailName</p>
+                            <p class="product-price">$@item.ProductDetailPrice</p>
+                        </div>
+
+                        <div class="quantity-controls">
+                            <button class="quantity-btn decrease" data-id="@item.Id">-</button>
+                            <input type="text" class="quantity-input" value="@item.Quantity" data-id="@item.Id" readonly>
+                            <button class="quantity-btn increase" data-id="@item.Id">+</button>
+                        </div>
+
+                        <button class="btn-remove" data-id="@item.Id">Remove</button>
+                    </div>
+                }
+
+                <div class="total-price">Total: $<span id="totalAmount">0.00</span></div>
+
+                <div class="btn-under">
+					<button class="btn btn-buy mt-3" id="buyBtn">Buy Selected</button>
+                    <button class="btn btn-outline-secondary" onclick="history.back()">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                </div>
+
+            </div>
+        }
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            updateTotal();
+
+            $(".increase").click(function () {
+                let input = $(this).siblings(".quantity-input");
+                let newValue = parseInt(input.val()) + 1;
+                input.val(newValue);
+                updateTotal();
+            });
+
+            $(".decrease").click(function () {
+                let input = $(this).siblings(".quantity-input");
+                let newValue = Math.max(1, parseInt(input.val()) - 1);
+                input.val(newValue);
+                updateTotal();
+            });
+
+            $(".btn-remove").click(function () {
+                $(this).closest(".cart-card").remove();
+                updateTotal();
+            });
+
+            $("#selectAllBtn").click(function () {
+                $(".select-item").prop("checked", true);
+                updateTotal();
+            });
+
+            $(".select-item").change(function () {
+                updateTotal();
+            });
+
+            function updateTotal() {
+                let total = 0;
+                $(".select-item:checked").each(function () {
+                    let price = parseFloat($(this).data("price"));
+                    let quantity = parseInt($(this).closest(".cart-card").find(".quantity-input").val());
+                    total += price * quantity;
+                });
+                $("#totalAmount").text(total.toFixed(2));
+            }
+        });
+    </script>
+
+</body>
+@Html.Partial("_Footer")
+</html>

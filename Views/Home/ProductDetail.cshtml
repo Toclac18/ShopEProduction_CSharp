@@ -17,65 +17,111 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <style>
         .container {
-            padding-top: 80px
+        padding: 80px
         }
         .card {
-            background: #ffffff;
-            border-radius: 10px;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        background: #ffffff;
+        border-radius: 10px;
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
 
-            .card:hover {
-                transform: scale(1.02);
-                box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
-            }
+        .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
         .product-image {
-            width: 100%;
-            max-width: 350px;
-            height: auto;
-            border-radius: 10px;
-            transition: transform 0.3s ease-in-out;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+        border-radius: 10px;
+        transition: transform 0.3s ease-in-out;
         }
 
-            .product-image:hover {
-                transform: scale(1.05);
-            }
+        .product-image:hover {
+        transform: scale(1.05);
+        }
 
         .badge {
-            font-size: 1rem;
-            padding: 8px 12px;
-            border-radius: 12px;
+        font-size: 1rem;
+        padding: 8px 12px;
+        border-radius: 12px;
         }
 
         .btn-outline-secondary {
-            transition: all 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
         }
 
-            .btn-outline-secondary:hover {
-                background-color: #6c757d;
-                color: white;
-            }
+        .btn-outline-secondary:hover {
+        background-color: #6c757d;
+        color: white;
+        }
 
         .table {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
+        background-color: white;
+        border-radius: 10px;
+        overflow: hidden;
         }
 
         .table-hover tbody tr:hover {
-            background-color: #f8f9fa;
-            transition: background-color 0.2s ease-in-out;
+        background-color: #f8f9fa;
+        transition: background-color 0.2s ease-in-out;
+        }
+
+        .empty {
+        background: red !important;
+        color: white !important;
+        }
+
+        /* Modal styles */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%); /* Centering the modal */
+        width: 50%; /* 50% width */
+        height: 50%; /* 50% height */
+        overflow: auto;
+        background-color: rgba(100, 100, 100, 0.9); /* White with opacity */
+        }
+
+        .modal-content {
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        color: red !important;
+        }
+
+        .close-btn {
+            color: black;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+        }
+
+
+        .close-btn:hover,
+        .close-btn:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
         }
     </style>
 </head>
 <body>
 
     @Html.Partial("_Header") <!-- Include Header Partial -->
-
     <div class="container mt-5">
         @if (isNotLogged)
         {
@@ -92,17 +138,30 @@
                     <div class="col-md-6 text-center">
                         <!-- Assuming product.ID holds the product ID -->
                         <img src="@Url.Content("~/Assets/Images/" + product.Id + ".jpg")" alt="@product.Name"
-                             class="img-fluid rounded product-image shadow-sm">
+                        class="img-fluid rounded product-image shadow-sm">
                     </div>
+
+                    @if (TempData["CartMessage"] != null)
+                    {
+                        <div id="cartAlert" class="alert alert-info text-center position-fixed top-0 start-50 translate-middle-x w-50" style="z-index: 1000;">
+                            @TempData["CartMessage"]
+                        </div>
+                    }
 
                     <!-- Product Details -->
                     <div class="col-md-6">
                         <h2 class="text-primary fw-bold">@product.Name</h2>
-                        <p class="text-muted">Sold: <strong>@product.SoldNumber</strong></p>
+                        @if(product.Type == 0)
+                        {
+                            <p class="text-muted">Sold: <strong>@product.SoldNumber</strong></p>
+                        } else
+                        {
+                            <p class="text-muted"> Product for Rented Demand!!!</p>
+                        }
                         <p>
                             <strong>Status: </strong>
-                            <span class="badge @(product.Status ?? false ? "bg-success" : "bg-danger")">
-                                @(product.Status ?? false ? "Available" : "Out of Stock")
+                            <span class="badge @(product.Status == true ? "bg-success" : "bg-danger")">
+                                @(product.Status == true ? "Available" : "Out of Stock")
                             </span>
                         </p>
 
@@ -118,37 +177,159 @@
                 <h3 class="text-center text-primary">📌 Product Details</h3>
                 <table class="table table-hover shadow-sm rounded">
                     <thead class="table-dark">
-                        <tr>
-                            <th>Detail Description</th>
-                            <th>Add to cart</th>
-                            <th>Click to buy</th>
-                        </tr>
+                        @if (product.Status == true && product.Type == 0)
+                        {
+                            <tr>
+                                <th>Detail Description</th>
+                                <th>Add to cart</th>
+                                <th>Click to buy</th>
+                            </tr>
+                        }
+                        else if (product.Status == true && product.Type == 1)
+                        {
+                            <tr>
+                                <th>Detail Description</th>
+                                <th>Rent Options</th>
+                            </tr>
+                        }
+                        else if (product.Status == false)
+                        {
+                            <!-- Modal Alert -->
+                            <div id="modalAlert" class="modal" style="display: block;">
+                                <div class="modal-content">
+                                    <span class="close-btn" onclick="closeModal()">&times;</span>
+                                    <p>This product is not available!!!</p>
+                                </div>
+                            </div>
+
+                            <tr>
+                                <th class="empty">This product currently is not available. Sorry for the inconvenience!!!</th>
+                            </tr>
+                        }
                     </thead>
                     <tbody>
                         @foreach (var detail in Model)
                         {
-                            <tr>
-                                <td>@detail.DetailDesc</td>
-                                <td>
-									<button class="btn btn-primary btn-sm" data-id="@detail.Id">
-										<i class="fas fa-cart-plus"></i> Add to Cart
-                                </td>
-                                <td>
-									<button class="btn btn-success btn-sm" data-id="@detail.Id">
-										<i class="fas fa-shopping-cart"></i> Buy Now
-                                </td>
-                            </tr>
+                            if (detail.Status == true && detail.ProductType == 0)
+                            {
+                                <tr>
+                                    <td>@detail.DetailDesc</td>
+                                    <td>
+                                        <div class="d-flex justify-content-between">
+                                            <button class="btn btn-primary btn-sm add-to-cart-btn"
+                                                    data-id="@detail.Id">
+                                                <i class="fas fa-info-circle"></i> Add To Cart
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-success btn-buy-now" data-id="@detail.Id">
+                                            <i class="fas fa-shopping-cart"></i> Buy Now
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                            else if (detail.Status == true && detail.ProductType == 1)
+                            {
+                                <tr>
+                                    <td>
+										@detail.DetailDesc
+                                    </td>
+									<td>
+										<button class="btn btn-warning btn-rent-now" data-id="@detail.Id">
+											<i class="fas fa-cart-plus"></i> Rent Now
+										</button>
+                                      </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>
             </div>
         }
     </div>
-
-    @Html.Partial("_Footer") <!-- Include Footer Partial -->
     <!-- JavaScript Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-
 </body>
+@Html.Partial("_Footer") <!-- Include Footer Partial -->
 </html>
+
+<script>
+     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let detailId = this.getAttribute("data-id");
+
+                if (!detailId) {
+                    console.error("detailId is undefined!");
+                    return;
+                }
+
+                fetch("/Cart/AddToCart", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: `detailId=${detailId}`
+                })
+                .then(response => response.text()) // Ensure response is read properly
+                .then(data => {
+                    console.log("Server response:", data);
+                    sessionStorage.setItem("cartAlertShown", "false"); // Allow alert to show
+                    location.reload(); // Reload the page to see the alert
+                })
+                .catch(error => console.error("Error:", error));
+            });
+        });
+    });
+</script>
+
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+        let alertBox = document.getElementById("cartAlert");
+
+        if (alertBox) {
+            console.log("Cart Alert Found - Checking Session Storage");
+
+            if (sessionStorage.getItem("cartAlertShown") === "false") {
+                console.log("Displaying cart alert...");
+                sessionStorage.setItem("cartAlertShown", "true"); // Prevent multiple alerts
+
+                setTimeout(() => {
+                    alertBox.style.display = "none";
+                }, 3000);
+            } else {
+                alertBox.style.display = "none";
+            }
+        }
+    });
+</script>
+
+<script>
+    // Function to close the modal
+        function closeModal() {
+        document.getElementById('modalAlert').style.display = 'none';
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var modal = document.getElementById("modalAlert");
+        if (modal) {
+            modal.style.display = 'block';
+        }
+    });
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let alertBox = document.getElementById("cartAlert");
+        if (alertBox) {
+            setTimeout(() => {
+                alertBox.style.display = "none";
+            }, 3000);
+        }
+    });
+
+</script>
+

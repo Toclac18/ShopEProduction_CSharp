@@ -77,8 +77,4 @@ namespace ShopEProduction.Controllers
             return RedirectToAction("Dashboard", "Home");
         }
     }
-
-    public class ShopEProductionContext
-    {
-    }
 }

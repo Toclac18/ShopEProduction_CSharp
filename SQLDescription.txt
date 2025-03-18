@@ -1,0 +1,9 @@
+﻿*) Table:
+
+1.  Roles
+	- ID: stores the role ID
+	- Name: stores the role name
+	Table contains ID 1 for Admin, 2 for User.
+	When a user is created, it is assigned a role ID of 2 by default.
+2.  Users
+	Table contains ID 1 for Admin, 2 for User.
