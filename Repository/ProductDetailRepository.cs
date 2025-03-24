@@ -28,5 +28,16 @@ namespace ShopEProduction.Repository
         {
             return await _context.ProductDetails.FirstOrDefaultAsync(pd => pd.Id == productDetailId);
         }
+
+        public async Task<int> FindProductIdByProductDetailId(int productDetailId)
+        {
+            var productDetail = await _context.ProductDetails.FirstOrDefaultAsync(pd => pd.Id == productDetailId);
+            return productDetail.ProductId;
+        }
+
+        public async Task<int> CountRemainQuantity(int productId)
+        {
+            return await _context.ProductDetails.CountAsync(pd => pd.ProductId == productId && pd.Status == true);
+        }
     }
 }

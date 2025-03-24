@@ -1,0 +1,156 @@
+﻿@model ShopEProduction.Models.WalletHistory
+
+@{
+    ViewData["Title"] = "Wallet History";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin: 100px auto 50px auto;
+            max-width: 900px;
+        }
+
+        .wallet-header {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .wallet-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+            .wallet-card:hover {
+                transform: scale(1.02);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            }
+
+        .current-balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .table {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .table thead th {
+                background-color: #007bff;
+                color: white;
+                text-align: center;
+            }
+
+            .table tbody tr:nth-child(even) {
+                background-color: #f2f2f2;
+            }
+
+            .table tbody tr:hover {
+                background-color: #e9ecef;
+            }
+
+        .history-type-in {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .history-type-out {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            transition: background 0.3s ease-in-out;
+        }
+
+            .btn-back:hover {
+                background-color: #5a6268;
+            }
+    </style>
+</head>
+<body>
+    @Html.Partial("_Header")
+    <div class="container">
+        <h2 class="wallet-header">💰 Wallet History</h2>
+
+        @if (Model == null || !Model.WalletHistoryDetails.Any())
+        {
+            <div class="alert alert-info text-center">Your wallet history is empty!</div>
+        }
+        else
+        {
+            <div class="wallet-card">
+                <p class="current-balance">Current Balance: $@Model.CurrentBalance.ToString("F2")</p>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date & Time</th>
+                            <th>Previous Balance</th>
+                            <th>Change</th>
+                            <th>New Balance</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in Model.WalletHistoryDetails.OrderByDescending(d => d.TimeExecution))
+                        {
+                            <tr>
+                                <td class="@(detail.HistoryType == "IN" ? "history-type-in" : "history-type-out")">
+                                    @detail.HistoryType
+                                </td>
+                                <td>@detail.TimeExecution.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td>$@detail.PreValue.ToString("F2")</td>
+                                <td class="@(detail.ChangeAmount >= 0 ? "text-success" : "text-danger")">
+                                    @(detail.ChangeAmount >= 0 ? "+" : "")@detail.ChangeAmount.ToString("F2")
+                                </td>
+                                <td>$@detail.PostValue.ToString("F2")</td>
+                                <td>@(detail.Description ?? "N/A")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <div class="text-center">
+            <button class="btn btn-back" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+        </div>
+    </div>
+    @Html.Partial("_Footer")
+</body>
+</html>

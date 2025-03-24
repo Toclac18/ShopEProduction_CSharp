@@ -25,9 +25,17 @@ public partial class ShopEproductionContext : DbContext
 
     public virtual DbSet<ProductDetail> ProductDetails { get; set; }
 
+    public virtual DbSet<PurchaseHistory> PurchaseHistories { get; set; }
+
+    public virtual DbSet<PurchaseHistoryDetail> PurchaseHistoryDetails { get; set; }
+
     public virtual DbSet<Role> Roles { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<WalletHistory> WalletHistories { get; set; }
+
+    public virtual DbSet<WalletHistoryDetail> WalletHistoryDetails { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -172,6 +180,52 @@ public partial class ShopEproductionContext : DbContext
                 .HasConstraintName("FK__PRODUCT_D__PRODU__693CA210");
         });
 
+        modelBuilder.Entity<PurchaseHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC272385F9C3");
+
+            entity.ToTable("PURCHASE_HISTORY");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CartId).HasColumnName("CART_ID");
+            entity.Property(e => e.PurchaseDate)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("PURCHASE_DATE");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.Cart).WithMany(p => p.PurchaseHistories)
+                .HasForeignKey(d => d.CartId)
+                .HasConstraintName("FK_PurchaseHistory_Carts");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PurchaseHistories)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_PurchaseHistory_Users");
+        });
+
+        modelBuilder.Entity<PurchaseHistoryDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC27E08E37B7");
+
+            entity.ToTable("PURCHASE_HISTORY_DETAILS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.HistoryId).HasColumnName("HISTORY_ID");
+            entity.Property(e => e.IsBoughtFlg).HasColumnName("IS_BOUGHT_FLG");
+            entity.Property(e => e.IsRentedFlg).HasColumnName("IS_RENTED_FLG");
+            entity.Property(e => e.PriceAtPurchase).HasColumnName("PRICE_AT_PURCHASE");
+            entity.Property(e => e.ProductDetailId).HasColumnName("PRODUCT_DETAIL_ID");
+
+            entity.HasOne(d => d.History).WithMany(p => p.PurchaseHistoryDetails)
+                .HasForeignKey(d => d.HistoryId)
+                .HasConstraintName("FK_PurchaseHistoryDetails_PurchaseHistory");
+
+            entity.HasOne(d => d.ProductDetail).WithMany(p => p.PurchaseHistoryDetails)
+                .HasForeignKey(d => d.ProductDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PurchaseHistoryDetails_ProductDetails");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__ROLES__3214EC278AB87615");
@@ -230,6 +284,63 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.UserRole).WithMany(p => p.Users)
                 .HasForeignKey(d => d.UserRoleId)
                 .HasConstraintName("FK__USERS__USER_ROLE__3C69FB99");
+        });
+
+        modelBuilder.Entity<WalletHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC2794D6499A");
+
+            entity.ToTable("WALLET_HISTORY");
+
+            entity.HasIndex(e => e.UserId, "UQ_WalletHistory_UserId").IsUnique();
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.CurrentBalance)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("CURRENT_BALANCE");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithOne(p => p.WalletHistory)
+                .HasForeignKey<WalletHistory>(d => d.UserId)
+                .HasConstraintName("FK_WalletHistory_Users");
+        });
+
+        modelBuilder.Entity<WalletHistoryDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC2707BF033F");
+
+            entity.ToTable("WALLET_HISTORY_DETAILS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.ChangeAmount)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("CHANGE_AMOUNT");
+            entity.Property(e => e.Description)
+                .HasMaxLength(255)
+                .HasColumnName("DESCRIPTION");
+            entity.Property(e => e.HistoryId).HasColumnName("HISTORY_ID");
+            entity.Property(e => e.HistoryType)
+                .HasMaxLength(3)
+                .HasColumnName("HISTORY_TYPE");
+            entity.Property(e => e.PostValue)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("POST_VALUE");
+            entity.Property(e => e.PreValue)
+                .HasColumnType("decimal(18, 2)")
+                .HasColumnName("PRE_VALUE");
+            entity.Property(e => e.PurchaseDetailId).HasColumnName("PURCHASE_DETAIL_ID");
+            entity.Property(e => e.TimeExecution)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime")
+                .HasColumnName("TIME_EXECUTION");
+
+            entity.HasOne(d => d.History).WithMany(p => p.WalletHistoryDetails)
+                .HasForeignKey(d => d.HistoryId)
+                .HasConstraintName("FK_WALLET_HISTORY");
+
+            entity.HasOne(d => d.PurchaseDetail).WithMany(p => p.WalletHistoryDetails)
+                .HasForeignKey(d => d.PurchaseDetailId)
+                .HasConstraintName("FK_PURCHASE_HISTORY_DETAILS");
         });
 
         OnModelCreatingPartial(modelBuilder);

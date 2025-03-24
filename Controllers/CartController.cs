@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
 
@@ -6,6 +8,7 @@ namespace ShopEProduction.Controllers
 {
     public class CartController : Controller
     {
+        private  readonly ShopEproductionContext _context = new ShopEproductionContext();
         private readonly ICartRepository _cartRepository;
         private readonly IProductDetailRepository _productDetailRepository;
         private readonly ICartItemRepository _cartItemRepository;
@@ -51,7 +54,7 @@ namespace ShopEProduction.Controllers
                 var userId = HttpContext.Session.GetString("userId");
                 if (userId == null)
                 {
-                    return RedirectToAction("Login", "Account");
+                    return Json(new { success = false, message = "Please log in.", redirect = Url.Action("Login", "Account") });
                 }
 
                 int parsedUserId = int.Parse(userId);
@@ -70,8 +73,7 @@ namespace ShopEProduction.Controllers
                 var productDetail = await _productDetailRepository.GetProductDetailByIdAsync(detailId);
                 if (productDetail == null)
                 {
-                    TempData["CartMessage"] = "Invalid product ID.";
-                    return RedirectToAction("ProductDetail", "Home");
+                    return Json(new { success = false, message = "Invalid product ID." });
                 }
 
                 // Check if the item already exists in the cart
@@ -99,14 +101,38 @@ namespace ShopEProduction.Controllers
                     await _cartItemRepository.AddNewCartItemAsync(cart.Id, newCartItem);
                 }
 
-                TempData["CartMessage"] = "Item added to cart successfully!";
-                Console.WriteLine("TempData CartMessage: " + TempData["CartMessage"]); // Debugging
-                return RedirectToAction("ProductDetail", "Home");
+                return Json(new { success = true, message = "Item added to cart successfully!" });
             }
             catch (Exception ex)
             {
-                TempData["CartMessage"] = "Failed to add item to cart.";
-                return RedirectToAction("ProductDetail", "Home");
+                return Json(new { success = false, message = "Failed to add item to cart: " + ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromCart(int cartItemId)
+        {
+            var userId = HttpContext.Session.GetString("userId");
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "Please log in." });
+            }
+            try
+            {
+                var cartItem = await _cartItemRepository.GetCartItemByIdAsync(cartItemId);
+                var cart = await _cartRepository.GetCartByUserIdAsync(int.Parse(userId));
+                if (cartItem == null)
+                {
+                    return Json(new { success = false, message = "Invalid cart item ID." });
+                }
+                await _cartItemRepository.RemoveCartItemById(cartItemId);
+               
+                return Json(new { success = true, message = "Item removed from cart successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Failed to remove item from cart." });
             }
         }
 

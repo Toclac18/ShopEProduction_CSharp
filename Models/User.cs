@@ -29,5 +29,9 @@ public partial class User
 
     public virtual Cart? Cart { get; set; }
 
+    public virtual ICollection<PurchaseHistory> PurchaseHistories { get; set; } = new List<PurchaseHistory>();
+
     public virtual Role? UserRole { get; set; }
+
+    public virtual WalletHistory? WalletHistory { get; set; }
 }

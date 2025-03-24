@@ -32,4 +32,6 @@ public partial class ProductDetail
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual Product Product { get; set; } = null!;
+
+    public virtual ICollection<PurchaseHistoryDetail> PurchaseHistoryDetails { get; set; } = new List<PurchaseHistoryDetail>();
 }

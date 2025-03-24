@@ -39,5 +39,22 @@ namespace ShopEProduction.Repository
             return await _context.CartItems.Where(c => c.CartId == cartId).ToListAsync();
         }
 
+        public async Task<CartItem> GetCartItemByIdAsync(int cartItemId)
+        {
+            return await _context.CartItems.FirstOrDefaultAsync(c => c.Id == cartItemId);
+        }
+
+        public async Task<CartItem> RemoveCartItemById(int cartItemId)
+        {
+            var cartItem = await _context.CartItems.FirstOrDefaultAsync(c => c.Id == cartItemId);
+            if (cartItem == null)
+            {
+                return null;
+            }
+            _context.CartItems.Remove(cartItem);
+            await _context.SaveChangesAsync();
+            return cartItem;
+        }
+
     }
 }
