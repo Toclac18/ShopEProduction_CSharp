@@ -1,0 +1,179 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "User Dashboard";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            padding: 20px;
+        }
+
+        #dashboardChart {
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body>
+    @Html.Partial("_Header") <!-- Optional: Your header partial -->
+
+    <div class="container">
+        <h2 class="text-center mb-4">Your Purchase Dashboard</h2>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="metric" class="form-label">Metric:</label>
+                <select id="metric" class="form-select">
+                    <option value="order" selected>Order Count</option>
+                    <option value="money">Money Amount</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="periodType" class="form-label">Period:</label>
+                <select id="periodType" class="form-select">
+                    <option value="year">Year (by Month)</option>
+                    <option value="month">Month (by Week)</option>
+                    <option value="week" selected>Week (by Day)</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="year" class="form-label">Year:</label>
+                <input type="number" id="year" class="form-control" value="@DateTime.Now.Year" min="2000" max="2099">
+            </div>
+        </div>
+        <div class="row mb-3" id="monthFilter" style="display: none;">
+            <div class="col-md-4">
+                <label for="month" class="form-label">Month:</label>
+                <select id="month" class="form-select">
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <canvas id="dashboardChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("_Footer") <!-- Optional: Your footer partial -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let chart;
+
+            function fetchDashboardData() {
+                let metric = $('#metric').val();
+                let periodType = $('#periodType').val();
+                let year = $('#year').val();
+                let month = periodType === 'week' ? $('#month').val() : null;
+
+                $('#monthFilter').toggle(periodType === 'year');
+                if (periodType === 'year') {
+                    $('#month').val(new Date().getMonth() + 1); // Default to current month
+                }
+
+                $.ajax({
+                    url: '@Url.Action("GetDashboardData", "UserDashboard")', // Updated to match controller
+                    method: 'GET',
+                    data: {
+                        metric: metric,
+                        periodType: periodType,
+                        year: year,
+                        month: month
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            updateChart(response.data, metric, periodType);
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Failed to load dashboard data.');
+                    }
+                });
+            }
+
+            function updateChart(data, metric, periodType) {
+                const isOrder = metric === 'order';
+                const labels = data.map(d => {
+                    if (periodType === 'year') return `${d.year}-${d.period}`;
+                    if (periodType === 'month') return `${d.year}-W${d.period}`;
+                    return `Day ${d.period}`; // Week by day
+                });
+                const values = data.map(d => isOrder ? d.orderCount : d.totalSpent);
+
+                if (chart) chart.destroy();
+
+                const ctx = document.getElementById('dashboardChart').getContext('2d');
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: isOrder ? 'Order Count' : 'Money Amount ($)',
+                            data: values,
+                            backgroundColor: isOrder ? 'rgba(54, 162, 235, 0.5)' : 'rgba(255, 99, 132, 0.5)',
+                            borderColor: isOrder ? 'rgba(54, 162, 235, 1)' : 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: isOrder ? 'Order Count' : 'Money Amount ($)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: periodType === 'year' ? 'Month' : periodType === 'month' ? 'Week' : 'Day'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: true },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        label += context.parsed.y;
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            $('#metric, #periodType, #year, #month').change(fetchDashboardData);
+            fetchDashboardData(); // Initial load
+        });
+    </script>
+</body>
+</html>
