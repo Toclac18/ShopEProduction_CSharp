@@ -98,6 +98,20 @@
             .btn-back:hover {
                 background-color: #5a6268;
             }
+
+        .btn-add-deposit {
+            background-color: forestgreen;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            transition: background 0.3s ease-in-out;
+        }
+
+            .btn-add-deposit:hover {
+                background-color: darkgreen;
+            }
     </style>
 </head>
 <body>
@@ -149,6 +163,7 @@
             <button class="btn btn-back" onclick="history.back()">
                 <i class="fas fa-arrow-left"></i> Back
             </button>
+            <button class="btn-add-deposit" onclick="window.location.href='/Deposit/AddDeposit'">Add my Deposit</button>
         </div>
     </div>
     @Html.Partial("_Footer")

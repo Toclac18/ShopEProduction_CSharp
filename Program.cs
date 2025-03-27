@@ -2,38 +2,46 @@
 using ShopEProduction.Models;
 using ShopEProduction.Repository;
 using ShopEProduction.Repository.IRepository;
+using ShopEProduction.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// onfigure Database Connection
+// Explicitly register IWebHostEnvironment as a singleton
+builder.Services.AddSingleton<IWebHostEnvironment>(builder.Environment);
+
+// Configure Database Connection
 builder.Services.AddDbContext<ShopEproductionContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyDbContext"),
-    sqlOptions => sqlOptions.EnableRetryOnFailure())
+        sqlOptions => sqlOptions.EnableRetryOnFailure())
 );
 
 // Add MVC Support
 builder.Services.AddControllersWithViews();
 
-// onfigure Session Management
+// Configure Session Management
 builder.Services.AddDistributedMemoryCache(); // In-memory session store
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
 });
 
+builder.Services.AddScoped<FileService>();
 // Register Repository with DI
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
 builder.Services.AddScoped<IProductDetailRepository, ProductDetailRepository>();
-
 builder.Services.AddScoped<ICartRepository, CartRepository>();
-
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
 
-
+// Debug environment at startup (using the final service provider)
 var app = builder.Build();
+
+// Middleware
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
+}
 
 // Enable Session
 app.UseSession();
@@ -46,6 +54,10 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseStaticFiles(); // Serves static files like images, CSS, JS from the wwwroot folder
+
+// Debug environment after app build
+var env = app.Services.GetService<IWebHostEnvironment>();
+Console.WriteLine($"After Build - Environment: {env?.EnvironmentName}, WebRootPath: {env?.WebRootPath}");
 
 // Ensure Routes Are Configured Correctly
 app.MapControllerRoute(

@@ -21,7 +21,18 @@
                     <a href="@Url.Action("Dashboard", "Home")" class="btn-home">My Dashboard</a>
                     <a href="@Url.Action("ShowWallet", "Wallet")" class="btn-wallet">My E_Wallet</a>
                     <a href="@Url.Action("ShowCart", "Cart")" class="btn-cart">My Cart</a>
-                    <a href="#" class="btn-profile">Profile</a>
+                    <div class="dropdown">
+                        <!-- Button to display "Settings" by default -->
+                        <button class="btn btn-profile" onclick="toggleDropdown()">My Account</button>
+
+                        <!-- The dropdown menu (initially hidden) -->
+                        <div id="dropdownMenu" class="dropdown-menu" style="display:none;">
+                            <a href="@Url.Action("ChangePassword", "Profile")" class="dropdown-item">Change Password</a>
+                            <a href="#" class="dropdown-item">Setting Language</a>
+                            <a href="#" class="dropdown-item">Admin Contact</a>
+                            <a href="#" class="dropdown-item">Theme</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             }  else
@@ -92,12 +103,12 @@
             color: darkred;
         }
 
-    .btn-profile {
+    .btn-settings {
         text-decoration: none;
         color: black;
     }
 
-        .btn-profile:hover {
+        .btn-settings:hover {
             text-decoration: dashed;
             color: darkred;
         }
@@ -121,4 +132,52 @@
             text-decoration: dashed;
             color: darkred;
         }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    /* Styling for the dropdown menu */
+    .dropdown-menu {
+        position: absolute;
+        background-color: white;
+        border: 1px solid #ddd;
+        min-width: 160px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: none; /* Hidden by default */
+        z-index: 1;
+    }
+
+    /* Styling for each dropdown item */
+    .dropdown-item {
+        padding: 8px 16px;
+        text-decoration: none;
+        color: black;
+        display: block;
+    }
+
+        /* Hover effect for dropdown items */
+        .dropdown-item:hover {
+            background-color: #f1f1f1;
+        }
 </style>
+
+<script>
+    // Function to toggle the visibility of the dropdown menu
+    function toggleDropdown() {
+        var menu = document.getElementById("dropdownMenu");
+        menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "block" : "none";
+    }
+
+    // Close the dropdown if the user clicks anywhere outside of it
+    window.onclick = function(event) {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        var dropdownButton = document.querySelector(".btn-profile");
+
+        // If the click is outside the button or dropdown menu, hide the menu
+        if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.style.display = "none";
+        }
+    }
+</script>

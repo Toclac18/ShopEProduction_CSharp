@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Add Deposit";
+}
+
+<!-- Bootstrap for styling -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+    body {
+        margin: 100px 0 50px 0;
+        background-color: #f8f9fa;
+    }
+
+    .deposit-container {
+        max-width: 500px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-payment {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: 0.3s;
+    }
+
+        .btn-payment:hover {
+            border-color: #007bff;
+            background-color: cadetblue;
+        }
+
+    .hidden {
+        display: none;
+    }
+
+    .qr-container img {
+        width: 200px;
+        margin-top: 10px;
+        border-radius: 8px;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 14px;
+    }
+</style>
+
+@Html.Partial("_Header")
+<div class="deposit-container">
+    <h2 class="text-center mb-4">Add Deposit</h2>
+
+    <form id="depositForm" method="post" action="/Deposit/ProcessDeposit">
+        <div class="mb-3">
+            <label class="form-label">Select Payment Method:</label>
+            <button type="button" class="btn btn-outline-primary btn-payment" onclick="selectPayment('banking')">Banking</button>
+            <button type="button" class="btn btn-outline-success btn-payment" onclick="selectPayment('momo')">E-Wallet MoMo</button>
+            <input type="hidden" id="paymentMethod" name="paymentMethod">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Enter Amount:</label>
+            <input type="number" id="amount" name="amount" class="form-control" min="1" required>
+            <span class="error-message" id="amountError"></span>
+        </div>
+
+        <div id="bankingOptions" class="hidden">
+            <div class="qr-container text-center">
+                <label class="form-label">Scan QR Code:</label>
+                <br>
+                <img src="~/Assets/Images/BankingImage/BankingSystem.jpg" alt="Banking QR Code">
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-4">Confirm</button>
+    </form>
+</div>
+@Html.Partial("_Footer")
+<script>
+    function selectPayment(method) {
+        document.getElementById("paymentMethod").value = method;
+        var bankingOptions = document.getElementById("bankingOptions");
+
+        if (method === "banking") {
+            bankingOptions.classList.remove("hidden");
+        } else {
+            bankingOptions.classList.add("hidden");
+        }
+    }
+
+    document.getElementById("depositForm").addEventListener("submit", function(event) {
+        var paymentMethod = document.getElementById("paymentMethod").value;
+        var amountInput = document.getElementById("amount");
+        var amountError = document.getElementById("amountError");
+        var amount = amountInput.value;
+
+        // Check if payment method is selected
+        if (!paymentMethod) {
+            alert("Please select a payment method.");
+            event.preventDefault();
+            return;
+        }
+
+        // Validate amount for all payment methods
+        if (!amount || isNaN(amount) || amount <= 0 || amount > 100000000) {
+            amountError.textContent = "Invalid amount! Please enter a value between 1 and 100,000,000.";
+            event.preventDefault();
+        } else {
+            amountError.textContent = "";
+        }
+    });
+</script>

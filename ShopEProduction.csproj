@@ -8,16 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\Assets\Images\1.jpg" />
-    <None Include="wwwroot\Assets\Images\Coursera.webp" />
-    <None Include="wwwroot\Assets\Images\5.jpg" />
-    <None Include="wwwroot\Assets\Images\login.jpg" />
-    <None Include="wwwroot\Assets\Images\7.jpg" />
-    <None Include="wwwroot\Assets\Images\3.jpg" />
-    <None Include="wwwroot\Assets\Images\8.jpg" />
-    <None Include="wwwroot\Assets\Images\4.jpg" />
-    <None Include="wwwroot\Assets\Images\6.jpg" />
-    <None Include="wwwroot\Assets\Images\2.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\1.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\Coursera.webp" />
+    <None Include="wwwroot\Assets\Images\ProductImage\5.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\login.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\7.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\3.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\8.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\4.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\6.jpg" />
+    <None Include="wwwroot\Assets\Images\ProductImage\2.jpg" />
   </ItemGroup>
 
   <ItemGroup>
