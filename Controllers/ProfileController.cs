@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ShopEProduction.DTOs;
 using ShopEProduction.Models;
 using ShopEProduction.Security.Password;
-using ShopEProduction.Services;
+using ShopEProduction.Services.Files;
 
 namespace ShopEProduction.Controllers
 {
@@ -160,7 +160,22 @@ namespace ShopEProduction.Controllers
                 user.Username = model.Username;
                 changesMade = true;
             }
-            // Add similar checks for Fullname, Email, Phonenumber...
+            if (!string.IsNullOrEmpty(model.Fullname) && model.Fullname != user.Fullname)
+            {
+                user.Fullname = model.Fullname;
+                changesMade = true;
+            }
+            if (!string.IsNullOrEmpty(model.Email) && model.Email != user.Email)
+            {
+                user.Email = model.Email;
+                changesMade = true;
+            }
+            if (!string.IsNullOrEmpty(model.Phonenumber) && model.Phonenumber != user.Phonenumber)
+            {
+                user.Phonenumber = model.Phonenumber;
+                changesMade = true;
+            }
+
 
             if (changesMade)
             {

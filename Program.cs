@@ -2,7 +2,9 @@
 using ShopEProduction.Models;
 using ShopEProduction.Repository;
 using ShopEProduction.Repository.IRepository;
-using ShopEProduction.Services;
+using ShopEProduction.Services.Email;
+using ShopEProduction.Services.Email.IService;
+using ShopEProduction.Services.Files;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,7 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductDetailRepository, ProductDetailRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Debug environment at startup (using the final service provider)
 var app = builder.Build();

@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace ShopEProduction.Services
+namespace ShopEProduction.Services.Files
 {
     public class FileService
     {

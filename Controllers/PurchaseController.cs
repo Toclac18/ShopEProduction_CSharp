@@ -1,23 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopEProduction.Models;
-using ShopEProduction.Repository;
 using ShopEProduction.Repository.IRepository;
+using ShopEProduction.Services.Email.IService;
 
 namespace ShopEProduction.Controllers
 {
     public class PurchaseController : Controller
     {
-        ShopEproductionContext _context = new ShopEproductionContext();
+        ShopEproductionContext _context;
         ICartRepository _cartRepository;
         IProductDetailRepository _productDetailRepository;
         ICartItemRepository _cartItemRepository;
-
-        public PurchaseController(ICartRepository cartRepository, IProductDetailRepository productDetailRepository, ICartItemRepository cartItemRepository)
+        private readonly IEmailService _emailService;
+        public PurchaseController(ShopEproductionContext context ,ICartRepository cartRepository, IProductDetailRepository productDetailRepository, ICartItemRepository cartItemRepository, IEmailService emailService)
         {
+            _context = context;
             _cartRepository = cartRepository;
             _productDetailRepository = productDetailRepository;
             _cartItemRepository = cartItemRepository;
+            _emailService = emailService;
         }
 
 
@@ -44,10 +46,19 @@ namespace ShopEProduction.Controllers
 
             // Create PurchaseHistory
             var cart = await _context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cart == null)
+            {
+                cart = new Cart
+                {
+                    UserId = userId.Value
+                };
+                _context.Carts.Add(cart);
+                await _context.SaveChangesAsync();
+            }
             var purchase = new PurchaseHistory
             {
                 UserId = userId.Value,
-                CartId = cart?.Id ?? 0, // Adjust if cart is optional
+                CartId = cart.Id,
                 PurchaseDate = DateTime.Now,
                 PurchaseHistoryDetails = new List<PurchaseHistoryDetail>
                 {
@@ -83,15 +94,29 @@ namespace ShopEProduction.Controllers
             _context.WalletHistoryDetails.Add(walletDetail);
             await _context.SaveChangesAsync();
 
+
+            User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            if (user != null)
+            {
+                var emailBody = $"You have successfully purchased product {detail.DetailDesc} for: ${detail.Price}.\n" +
+                                $"This is information to login system: {detail.DetailPrivateDesc}.\n" +
+                                "Thanks for enjoying ShopEProduction!\n" +
+                                "Have a good day <3";
+                _emailService.SendEmailAsync(user.Email, "[ShopEProduction_Purchase Confirmation]", emailBody);
+            }
+
+
             return Json(new { success = true, message = "Purchase completed successfully!" });
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> BuyCart([FromBody] List<CartItemSelectionDto> selectedItems)
         {
             var rawBody = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             Console.WriteLine("Raw request body: " + rawBody);
-
+            List<String> loginInfor = new List<string>();
             try
             {
                 var userId = HttpContext.Session.GetString("userId");
@@ -125,6 +150,7 @@ namespace ShopEProduction.Controllers
                     }
 
                     var productDetail = await _productDetailRepository.GetProductDetailByIdAsync(cartItem.ProductDetailId);
+                    
                     if (productDetail == null)
                     {
                         return Json(new { success = false, message = $"ProductDetail not found for ID {selected.productDetailId}" });
@@ -151,7 +177,10 @@ namespace ShopEProduction.Controllers
                         IsRentedFlg = null
                     });
 
+                    loginInfor.Add(productDetail.DetailPrivateDesc);
+
                     await _cartItemRepository.RemoveCartItemById(cartItem.Id);
+
                 }
 
                 if (wallet.CurrentBalance < totalCost)
@@ -186,6 +215,16 @@ namespace ShopEProduction.Controllers
                 walletDetail.PurchaseDetailId = purchase.PurchaseHistoryDetails.First().Id;
                 _context.WalletHistoryDetails.Add(walletDetail);
                 await _context.SaveChangesAsync();
+
+                User user = await _context.Users.FirstOrDefaultAsync(u => u.Id == parsedUserId);
+                if (user != null)
+                {
+                    var emailBody = $"You have successfully purchased for list product: \n" +
+                                    $"- {string.Join("\n- ", loginInfor)}.\n" +
+                                    "Thanks for enjoying ShopEProduction!\n" +
+                                    "Have a good day <3";
+                    _emailService.SendEmailAsync(user.Email, "[ShopEProduction_Purchase Confirmation]", emailBody);
+                }
 
                 return Json(new { success = true, message = "Purchase completed successfully!" });
             }
