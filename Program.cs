@@ -5,6 +5,10 @@ using ShopEProduction.Repository.IRepository;
 using ShopEProduction.Services.Email;
 using ShopEProduction.Services.Email.IService;
 using ShopEProduction.Services.Files;
+using ShopEProduction.Services.OTP;
+using ShopEProduction.Services.OTP.IOTP;
+using ShopEProduction.Services.SMS;
+using ShopEProduction.Services.SMS.ISMS;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,15 +30,18 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
 });
-
+// Register Service with DI
+builder.Services.AddAntiforgery();
 builder.Services.AddScoped<FileService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IOTPService, OTPService>();
+builder.Services.AddScoped<ISmsService, TwilioSmsService>();
 // Register Repository with DI
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductDetailRepository, ProductDetailRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
-builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Debug environment at startup (using the final service provider)
 var app = builder.Build();

@@ -20,6 +20,8 @@ namespace ShopEProduction.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            HttpContext.Session.Clear();
+            TempData.Clear();
             return View();
         }
 
@@ -27,6 +29,9 @@ namespace ShopEProduction.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(User user)
         {
+            // Track incorrect password attempts in session
+            const string attemptKey = "PasswordAttempts";
+            int attempts = HttpContext.Session.GetInt32(attemptKey) ?? 0;
 
             var adminEmail = _config["AdminAccount:AdminEmail"];
             var adminPassword = _config["AdminAccount:AdminPassword"];
@@ -51,9 +56,12 @@ namespace ShopEProduction.Controllers
                         ViewBag.Message = "User is currently inactive! Please contact to active your account!";
                         return View(user);
                     }
+                    // Reset attempts on successful password verification
+                    HttpContext.Session.SetInt32(attemptKey, 0);
                     HttpContext.Session.SetString("userId", loginUser.Id.ToString());
                     HttpContext.Session.SetString("userRoleId", loginUser.UserRoleId.ToString());
-                    HttpContext.Session.SetString("userName", loginUser.Fullname);
+                    HttpContext.Session.SetString("userName", loginUser.Username);
+                    HttpContext.Session.SetString("sessionId", HttpContext.Session.Id);
                     if (loginUser.UserRoleId == 1)
                     {
                         return RedirectToAction("Dashboard", "Admin");
@@ -62,6 +70,21 @@ namespace ShopEProduction.Controllers
                     {
                         return RedirectToAction("Dashboard", "Home"); // Redirect Users
                     }
+                }
+                attempts++;
+                HttpContext.Session.SetInt32(attemptKey, attempts);
+                if (attempts >= 3)
+                {
+                    // Update user status to 0 (locked/inactive)
+                    user.UserStatus = false;
+                    _context.Users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    // Log out by clearing session
+                    HttpContext.Session.Clear();
+
+                    // Redirect to AdminContact/ContactForPassword
+                    return RedirectToAction("ContactForPassword", "AdminContact");
                 }
                 ViewBag.Message = "Wrong password!!! Please try again.";
                 return View(user);

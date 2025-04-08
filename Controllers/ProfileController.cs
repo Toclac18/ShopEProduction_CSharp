@@ -266,7 +266,7 @@ namespace ShopEProduction.Controllers
             await _context.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Password changed successfully!";
-            return RedirectToAction("ShowProfile");
+            return RedirectToAction("Login", "Login");
         }
     }
 }

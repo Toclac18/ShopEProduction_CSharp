@@ -1,0 +1,102 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="sidebar">
+    <div class="nav">
+        <a href="#">Back</a>
+        <a href="#">Home</a>
+        <a href="#">Contact History</a>
+    </div>
+    <h3>VIEW CONTACT</h3>
+    <h3>Contacts</h3>
+    <ul class="contact-list">
+        <li>
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <a href="@Url.Action("ContactForPassword",  "AdminContact")">Contact for password</a>
+        </li>
+        <li>
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <a>Contact for orders</a>
+        </li>
+        <li>
+            <img src="https://via.placeholder.com/40" alt="Avatar">
+            <a>Contact for transactions</a>
+        </li>
+    </ul>
+    <button class="add-contact-btn">Contact for another type</button>
+</div>
+
+<style>
+    /* Sidebar */
+    .sidebar {
+        width: 300px;
+        background: #ffffff;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        position: fixed;
+        height: 100%;
+    }
+
+        .sidebar .nav {
+            margin-bottom: 20px;
+        }
+
+            .sidebar .nav a {
+                color: #666;
+                text-decoration: none;
+                margin: 0 10px;
+                font-size: 14px;
+            }
+
+        .sidebar h3 {
+            font-size: 18px;
+            margin: 20px 0;
+            color: #6c5ce7;
+        }
+
+    .contact-list {
+        list-style: none;
+    }
+
+        .contact-list li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+            .contact-list li:hover {
+                background: #f0f0f0;
+            }
+
+            .contact-list li img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                margin-right: 10px;
+            }
+
+            .contact-list li span {
+                font-size: 14px;
+                color: #333;
+            }
+
+    .add-contact-btn {
+        background: #6c5ce7;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+        .add-contact-btn:hover {
+            background: #5a4bdb;
+        }
+</style>

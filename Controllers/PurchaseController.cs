@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShopEProduction.DTOs;
 using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
 using ShopEProduction.Services.Email.IService;
@@ -114,8 +115,6 @@ namespace ShopEProduction.Controllers
         [HttpPost]
         public async Task<IActionResult> BuyCart([FromBody] List<CartItemSelectionDto> selectedItems)
         {
-            var rawBody = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            Console.WriteLine("Raw request body: " + rawBody);
             List<String> loginInfor = new List<string>();
             try
             {
@@ -220,23 +219,18 @@ namespace ShopEProduction.Controllers
                 if (user != null)
                 {
                     var emailBody = $"You have successfully purchased for list product: \n" +
-                                    $"- {string.Join("\n- ", loginInfor)}.\n" +
-                                    "Thanks for enjoying ShopEProduction!\n" +
+                                    $"- {string.Join("\n- ", loginInfor)}." +
+                                    "\nThanks for enjoying ShopEProduction!\n" +
                                     "Have a good day <3";
                     _emailService.SendEmailAsync(user.Email, "[ShopEProduction_Purchase Confirmation]", emailBody);
                 }
-
+                TempData["CartMessage"] = "Purchase completed successfully!";
                 return Json(new { success = true, message = "Purchase completed successfully!" });
             }
             catch (Exception ex)
-            {
+            { 
                 return Json(new { success = false, message = "Error processing purchase: " + ex.Message });
             }
         }
     }
-}
-public class CartItemSelectionDto
-{
-    public int productDetailId { get; set; } // Match frontend case
-    public int Quantity { get; set; }
 }

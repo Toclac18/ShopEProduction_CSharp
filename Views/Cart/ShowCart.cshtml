@@ -2,6 +2,7 @@
 
 @{
 	ViewData["Title"] = "Shopping Cart";
+	float currentWallet = ViewBag.wallet;
 }
 
 <!DOCTYPE html>
@@ -172,7 +173,7 @@
 		{
 			<div class="alert alert-info">@TempData["CartMessage"]</div>
 		}
-
+		<div id="cartAlert" class="alert alert-info text-center position-fixed top-0 start-50 translate-middle-x w-50" style="z-index: 1000;"></div>
 		@if (Model == null || !Model.Any())
 		{
 			<div class="alert alert-info text-center">Your cart is empty!</div>
@@ -180,7 +181,11 @@
 		else
 		{
 			<div>
-				<button class="btn btn-secondary mb-3" id="selectAllBtn">Select All</button>
+				<div>
+					<button class="btn btn-secondary mb-3" id="selectAllBtn">Select All</button>
+					<div>Current wallet:  @currentWallet $</div>
+				</div>
+				
 
 				@foreach (var item in Model)
 				{
@@ -349,3 +354,21 @@
 </body>
 @Html.Partial("_Footer")
 </html>
+<script>
+	$.ajax({
+		url: '/Purchase/BuyNow',
+		method: 'POST',
+		data: { detailId: detailId },
+		success: function (response) {
+			if (response.success) {
+				let alertBox = $('#cartAlert');
+				alertBox.removeClass('alert-danger').addClass('alert-info');
+				alertBox.text(response.message);
+				alertBox.show();
+				setTimeout(() => alertBox.fadeOut(), 3000);
+			} else {
+				$('#modalError').removeClass('d-none').text(response.message);
+			}
+		}
+	});
+</script>

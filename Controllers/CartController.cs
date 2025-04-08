@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Utilities;
 using ShopEProduction.Models;
 using ShopEProduction.Repository.IRepository;
 
@@ -24,7 +25,8 @@ namespace ShopEProduction.Controllers
         public async Task<IActionResult> ShowCart()
         {
             string userId = HttpContext.Session.GetString("userId");
-
+            int parseUserId = int.Parse(userId);
+            var wallet = await _context.WalletHistories.FirstOrDefaultAsync(wh => wh.UserId == parseUserId);
             if (string.IsNullOrEmpty(userId))
             {
                 TempData["CartMessage"] = "You must log in to see your cart!";
@@ -39,6 +41,13 @@ namespace ShopEProduction.Controllers
                 return RedirectToAction("Home", "Home");
             }
 
+            if(wallet == null)
+            {
+                TempData["CartMessage"] = "Cannot find your  e_wallet!";
+                return RedirectToAction("Home", "Home");
+            }
+            float currentWallet = (float)wallet.CurrentBalance;
+            ViewBag.Wallet = currentWallet;    
             List<CartItem> cartItems = await _cartItemRepository.getListCartItem(cart.Id);
 
             return View("ShowCart", cartItems);
