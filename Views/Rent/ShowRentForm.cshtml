@@ -1,0 +1,369 @@
+﻿@model ShopEProduction.Models.User
+@{
+    ViewData["Title"] = "Netflix Account Rental";
+}
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #141414 0%, #2c2c2c 100%);
+        font-family: 'Bebas Neue', 'Segoe UI', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .form-wrapper {
+        width: 100%;
+        max-width: 600px;
+        padding: 50px;
+        background: rgba(30, 30, 30, 0.95);
+        color: #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+        margin: 20px;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+        color: #e50914;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    label {
+        font-size: 1.1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        display: block;
+        color: #ddd;
+    }
+
+    .form-control,
+    .form-select {
+        background-color: #333;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #e50914;
+            box-shadow: 0 0 8px rgba(229, 9, 20, 0.5);
+            outline: none;
+        }
+
+        .form-control:valid:not(:placeholder-shown),
+        .form-select:valid {
+            border-color: #28a745;
+        }
+
+        .form-control:invalid:not(:focus):not(:placeholder-shown) {
+            border-color: #dc3545;
+        }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .form-check-input {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background-color: #444;
+        border: 2px solid #777;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 10px;
+    }
+
+        .form-check-input:checked {
+            background-color: #e50914;
+            border-color: #e50914;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z'/%3E%3C/svg%3E");
+            background-size: 14px;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+    .form-check-label {
+        font-size: 1rem;
+        color: #ccc;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background-color: #e50914;
+        border: none;
+        padding: 14px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 12px;
+        width: 100%;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-primary:hover {
+            background-color: #c10812;
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #fff;
+            border-top: 3px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+    .alert-danger {
+        background-color: #dc3545;
+        color: #fff;
+        font-weight: 600;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 25px;
+        animation: slideIn 0.5s ease;
+    }
+
+    .text-danger {
+        color: #ff6b6b !important;
+        font-size: 0.9rem;
+        margin-top: -15px;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    ::placeholder {
+        color: #888;
+        font-style: italic;
+    }
+
+    select option {
+        background: #333;
+        color: #fff;
+    }
+
+    .duration-group {
+        transition: all 0.3s ease;
+        max-height: 0;
+        overflow: hidden;
+    }
+
+        .duration-group.active {
+            max-height: 200px;
+            margin-bottom: 20px;
+        }
+
+    .payment-image-container {
+        text-align: center;
+        margin-bottom: 20px;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+    }
+
+        .payment-image-container.active {
+            max-height: 100px;
+        }
+
+    .payment-image {
+        max-width: 120px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        transition: opacity 0.3s ease;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    .form-control,
+    .form-select,
+    .btn-primary {
+        font-size: 0.9rem;
+    }
+
+    .payment-image {
+        max-width: 100px;
+    }
+
+    }
+</style>
+
+<div class="form-wrapper">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <h2>Netflix Account Rental</h2>
+
+    <form action="@Url.Action("SubmitForm", "Rent")" method="post" novalidate id="rentalForm">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label for="pickupDate">Pickup Date</label>
+            <input type="date" asp-for="PickupDate" id="pickupDate" class="form-control" required />
+            <span asp-validation-for="PickupDate" class="text-danger"></span>
+        </div>
+
+        <label>Rental Duration Type</label>
+        <div class="mb-3 d-flex gap-4">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="DurationType" id="durationDays" value="Days" required>
+                <label class="form-check-label" for="durationDays">Days</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="DurationType" id="durationMonths" value="Months">
+                <label class="form-check-label" for="durationMonths">Months</label>
+            </div>
+        </div>
+
+        <div class="duration-group" id="rentalDaysGroup">
+            <label for="rentalDays">Select End Date</label>
+            <input name="RentalDays" id="rentalDays" class="form-control" type="date" />
+        </div>
+
+        <div class="duration-group" id="rentalMonthsGroup">
+            <label for="rentalMonths">Rental Duration</label>
+            <select name="RentalMonths" id="rentalMonths" class="form-select">
+                <option value="">Select Duration</option>
+                <option value="1 Month">1 Month</option>
+                <option value="3 Months">3 Months</option>
+                <option value="6 Months">6 Months</option>
+                <option value="12 Months">12 Months</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="PaymentMethod">Payment Method</label>
+            <select asp-for="PaymentMethod" class="form-select" id="paymentMethod" required>
+                <option value="">Select Payment Method</option>
+                <option value="Credit Card">Credit Card</option>
+                <option value="PayPal">PayPal</option>
+                <option value="Gift Card">Netflix Gift Card</option>
+            </select>
+            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+        </div>
+
+        <div class="payment-image-container" id="paymentImageContainer">
+            <img src="" alt="Payment Method" class="payment-image" id="paymentImage" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="AdditionalNotes">Additional Notes (Optional)</label>
+            <textarea asp-for="AdditionalNotes" class="form-control" rows="4" placeholder="Any requests, preferences, or comments..."></textarea>
+            <span asp-validation-for="AdditionalNotes" class="text-danger"></span>
+        </div>
+
+        <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-primary" id="submitBtn">Submit Request</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function toggleDurationFields() {
+        const selected = document.querySelector('input[name="DurationType"]:checked');
+        const daysGroup = document.getElementById('rentalDaysGroup');
+        const monthsGroup = document.getElementById('rentalMonthsGroup');
+
+        daysGroup.classList.remove('active');
+        monthsGroup.classList.remove('active');
+
+        if (selected) {
+            if (selected.value === 'Days') {
+                daysGroup.classList.add('active');
+            } else {
+                monthsGroup.classList.add('active');
+            }
+        }
+    }
+
+    function updatePaymentImage() {
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        const imageContainer = document.getElementById('paymentImageContainer');
+        const imageElement = document.getElementById('paymentImage');
+
+        const imageMap = {
+            'Credit Card': 'https://via.placeholder.com/120x40?text=Credit+Card',
+            'PayPal': 'https://via.placeholder.com/120x40?text=PayPal',
+            'Gift Card': 'https://via.placeholder.com/120x40?text=Netflix+Gift+Card',
+            '': ''
+        };
+
+        if (paymentMethod && imageMap[paymentMethod]) {
+            imageElement.src = imageMap[paymentMethod];
+            imageElement.alt = paymentMethod;
+            imageContainer.classList.add('active');
+        } else {
+            imageContainer.classList.remove('active');
+            imageElement.src = '';
+            imageElement.alt = '';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('rentalForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const paymentMethodSelect = document.getElementById('paymentMethod');
+
+        document.querySelectorAll('input[name="DurationType"]').forEach(radio => {
+            radio.addEventListener('change', toggleDurationFields);
+        });
+
+        paymentMethodSelect.addEventListener('change', updatePaymentImage);
+
+        form.addEventListener('submit', function (e) {
+            const pickupDate = document.getElementById('pickupDate').value;
+            const durationType = document.querySelector('input[name="DurationType"]:checked');
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            if (!pickupDate || !durationType || !paymentMethod) {
+                e.preventDefault();
+                alert('Please fill out all required fields.');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            submitBtn.textContent = 'Submitting...';
+        });
+
+        toggleDurationFields(); // Initialize duration fields
+        updatePaymentImage(); // Initialize payment image
+    });
+</script>

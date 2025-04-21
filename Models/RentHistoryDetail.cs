@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ShopEProduction.Models;
 
-public partial class PurchaseHistoryDetail
+public partial class RentHistoryDetail
 {
     public int Id { get; set; }
 
@@ -11,17 +11,19 @@ public partial class PurchaseHistoryDetail
 
     public int ProductDetailId { get; set; }
 
-    public double PriceAtPurchase { get; set; }
+    public DateTime Duration { get; set; }
 
-    public bool? IsRentedFlg { get; set; }
+    public DateTime RentedDate { get; set; }
 
-    public bool? IsBoughtFlg { get; set; }
+    public DateTime ExpiredDate { get; set; }
+
+    public double Price { get; set; }
 
     public int? DiscountId { get; set; }
 
     public virtual Discount? Discount { get; set; }
 
-    public virtual PurchaseHistory History { get; set; } = null!;
+    public virtual RentHistory History { get; set; } = null!;
 
     public virtual ProductDetail ProductDetail { get; set; } = null!;
 

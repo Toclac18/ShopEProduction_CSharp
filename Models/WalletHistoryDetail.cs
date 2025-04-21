@@ -23,7 +23,11 @@ public partial class WalletHistoryDetail
 
     public int? PurchaseDetailId { get; set; }
 
+    public int? RentDetailId { get; set; }
+
     public virtual WalletHistory History { get; set; } = null!;
 
     public virtual PurchaseHistoryDetail? PurchaseDetail { get; set; }
+
+    public virtual RentHistoryDetail? RentDetail { get; set; }
 }

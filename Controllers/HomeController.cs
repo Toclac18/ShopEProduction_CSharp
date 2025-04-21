@@ -33,7 +33,6 @@ namespace ShopEProduction.Controllers
             return View("Home", products);
         }
 
-
         public async Task<IActionResult> ProductDetail(int id)
         {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("userId")))

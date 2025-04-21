@@ -24,9 +24,4 @@ public partial class CartItem
     public virtual Product Product { get; set; } = null!;
 
     public virtual ProductDetail ProductDetail { get; set; } = null!;
-
-    internal bool Any()
-    {
-        throw new NotImplementedException();
-    }
 }

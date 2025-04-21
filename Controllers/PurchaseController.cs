@@ -34,6 +34,7 @@ namespace ShopEProduction.Controllers
             }
 
             var detail = await _context.ProductDetails.FirstOrDefaultAsync(pd => pd.Id == detailId);
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == detail.ProductId);
             if (detail == null || detail.Status != true || detail.ProductType != 0)
             {
                 return Json(new { success = false, message = "Product unavailable or not for sale." });
@@ -88,6 +89,16 @@ namespace ShopEProduction.Controllers
 
             wallet.CurrentBalance -= (decimal)detail.Price;
             detail.IsBoughtFlg = true; // Mark as bought
+            detail.ReleasedDate = DateTime.Now;
+
+            if( Convert.ToInt32(_productDetailRepository.CountRemainQuantity(product.Id)) <= 0)
+            {
+                product.Status = false;
+                detail.Status = false;
+                _context.Products.Update(product);
+                _context.ProductDetails.Update(detail);
+                await _context.SaveChangesAsync();
+            }
 
             _context.PurchaseHistories.Add(purchase);
             await _context.SaveChangesAsync();

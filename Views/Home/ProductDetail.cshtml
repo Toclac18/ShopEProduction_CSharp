@@ -179,6 +179,7 @@
                                         <button class="btn btn-warning btn-rent-now" data-id="@detail.Id">
                                             <i class="fas fa-cart-plus"></i> Rent Now
                                         </button>
+
                                     </td>
                                 </tr>
                             }
@@ -310,6 +311,12 @@
                     }
                 });
             });
+
+            $('.btn-rent-now').click(function () {
+                let detailId = $(this).data('id');
+                window.location.href = `/Rent/ShowRentForm?detailId=${detailId}`;
+            });
+
         });
     </script>
 </body>

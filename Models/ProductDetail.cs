@@ -13,15 +13,11 @@ public partial class ProductDetail
 
     public double Price { get; set; }
 
-    public DateTime? ReleaseDate { get; set; }
-
-    public DateTime? ExpiredDate { get; set; }
+    public DateTime? ReleasedDate { get; set; }
 
     public string DetailDesc { get; set; } = null!;
 
     public string DetailPrivateDesc { get; set; } = null!;
-
-    public DateTime? Duration { get; set; }
 
     public bool? IsRentedFlg { get; set; }
 
@@ -34,4 +30,6 @@ public partial class ProductDetail
     public virtual Product Product { get; set; } = null!;
 
     public virtual ICollection<PurchaseHistoryDetail> PurchaseHistoryDetails { get; set; } = new List<PurchaseHistoryDetail>();
+
+    public virtual ICollection<RentHistoryDetail> RentHistoryDetails { get; set; } = new List<RentHistoryDetail>();
 }

@@ -37,8 +37,8 @@ namespace ShopEProduction.Controllers
 
             if (cart == null)
             {
-                TempData["CartMessage"] = "Your cart is empty!";
-                return RedirectToAction("Home", "Home");
+                //TempData["CartMessage"] = "Your cart is empty!";
+                return View();
             }
 
             if(wallet == null)

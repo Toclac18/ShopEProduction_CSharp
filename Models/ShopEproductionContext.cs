@@ -21,6 +21,8 @@ public partial class ShopEproductionContext : DbContext
 
     public virtual DbSet<Category> Categories { get; set; }
 
+    public virtual DbSet<Discount> Discounts { get; set; }
+
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductDetail> ProductDetails { get; set; }
@@ -28,6 +30,10 @@ public partial class ShopEproductionContext : DbContext
     public virtual DbSet<PurchaseHistory> PurchaseHistories { get; set; }
 
     public virtual DbSet<PurchaseHistoryDetail> PurchaseHistoryDetails { get; set; }
+
+    public virtual DbSet<RentHistory> RentHistories { get; set; }
+
+    public virtual DbSet<RentHistoryDetail> RentHistoryDetails { get; set; }
 
     public virtual DbSet<Role> Roles { get; set; }
 
@@ -45,11 +51,11 @@ public partial class ShopEproductionContext : DbContext
     {
         modelBuilder.Entity<Cart>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CARTS__3214EC270A1D37E9");
+            entity.HasKey(e => e.Id).HasName("PK__CARTS__3214EC277F203D76");
 
             entity.ToTable("CARTS");
 
-            entity.HasIndex(e => e.UserId, "UQ__CARTS__F3BEEBFE2BCACCB6").IsUnique();
+            entity.HasIndex(e => e.UserId, "UQ__CARTS__F3BEEBFEE4FBF45C").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.UserId).HasColumnName("USER_ID");
@@ -57,12 +63,12 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.User).WithOne(p => p.Cart)
                 .HasForeignKey<Cart>(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CARTS__USER_ID__17036CC0");
+                .HasConstraintName("FK__CARTS__USER_ID__4D94879B");
         });
 
         modelBuilder.Entity<CartItem>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CART_ITE__3214EC2765EE5BC8");
+            entity.HasKey(e => e.Id).HasName("PK__CART_ITE__3214EC279658A1CA");
 
             entity.ToTable("CART_ITEMS");
 
@@ -81,26 +87,26 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.Cart).WithMany(p => p.CartItems)
                 .HasForeignKey(d => d.CartId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CART_ITEM__CART___2DE6D218");
+                .HasConstraintName("FK__CART_ITEM__CART___5070F446");
 
             entity.HasOne(d => d.ProductDetail).WithMany(p => p.CartItems)
                 .HasForeignKey(d => d.ProductDetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CART_ITEM__PRODU__2FCF1A8A");
+                .HasConstraintName("FK__CART_ITEM__PRODU__52593CB8");
 
             entity.HasOne(d => d.Product).WithMany(p => p.CartItems)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__CART_ITEM__PRODU__2EDAF651");
+                .HasConstraintName("FK__CART_ITEM__PRODU__5165187F");
         });
 
         modelBuilder.Entity<Category>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__CATEGORI__3214EC27C4AE8295");
+            entity.HasKey(e => e.Id).HasName("PK__CATEGORI__3214EC27E44838E7");
 
             entity.ToTable("CATEGORIES");
 
-            entity.HasIndex(e => e.CategoryName, "UQ__CATEGORI__9374460F75B625C7").IsUnique();
+            entity.HasIndex(e => e.CategoryName, "UQ__CATEGORI__9374460FFEC9E06D").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.CategoryName)
@@ -115,9 +121,28 @@ public partial class ShopEproductionContext : DbContext
                 .HasColumnName("STATUS");
         });
 
+        modelBuilder.Entity<Discount>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__DISCOUNT__3214EC272BAF35CF");
+
+            entity.ToTable("DISCOUNTS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DiscountValue).HasColumnName("DISCOUNT_VALUE");
+            entity.Property(e => e.ExpiredDate)
+                .HasColumnType("datetime")
+                .HasColumnName("EXPIRED_DATE");
+            entity.Property(e => e.Status).HasColumnName("STATUS");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Discounts)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_Discount_Users");
+        });
+
         modelBuilder.Entity<Product>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PRODUCTS__3214EC27CEBFA887");
+            entity.HasKey(e => e.Id).HasName("PK__PRODUCTS__3214EC27C819B682");
 
             entity.ToTable("PRODUCTS");
 
@@ -137,12 +162,12 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.Category).WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__PRODUCTS__CATEGO__5DCAEF64");
+                .HasConstraintName("FK__PRODUCTS__CATEGO__440B1D61");
         });
 
         modelBuilder.Entity<ProductDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PRODUCT___3214EC278BFA915D");
+            entity.HasKey(e => e.Id).HasName("PK__PRODUCT___3214EC27E04A6F5A");
 
             entity.ToTable("PRODUCT_DETAILS");
 
@@ -153,12 +178,6 @@ public partial class ShopEproductionContext : DbContext
             entity.Property(e => e.DetailPrivateDesc)
                 .HasMaxLength(255)
                 .HasColumnName("DETAIL_PRIVATE_DESC");
-            entity.Property(e => e.Duration)
-                .HasColumnType("datetime")
-                .HasColumnName("DURATION");
-            entity.Property(e => e.ExpiredDate)
-                .HasColumnType("datetime")
-                .HasColumnName("EXPIRED_DATE");
             entity.Property(e => e.IsBoughtFlg)
                 .HasDefaultValue(false)
                 .HasColumnName("IS_BOUGHT_FLG");
@@ -168,21 +187,21 @@ public partial class ShopEproductionContext : DbContext
             entity.Property(e => e.Price).HasColumnName("PRICE");
             entity.Property(e => e.ProductId).HasColumnName("PRODUCT_ID");
             entity.Property(e => e.ProductType).HasColumnName("PRODUCT_TYPE");
-            entity.Property(e => e.ReleaseDate)
+            entity.Property(e => e.ReleasedDate)
                 .HasColumnType("datetime")
-                .HasColumnName("RELEASE_DATE");
+                .HasColumnName("RELEASED_DATE");
             entity.Property(e => e.Status)
                 .HasDefaultValue(true)
                 .HasColumnName("STATUS");
 
             entity.HasOne(d => d.Product).WithMany(p => p.ProductDetails)
                 .HasForeignKey(d => d.ProductId)
-                .HasConstraintName("FK__PRODUCT_D__PRODU__693CA210");
+                .HasConstraintName("FK__PRODUCT_D__PRODU__49C3F6B7");
         });
 
         modelBuilder.Entity<PurchaseHistory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC272385F9C3");
+            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC270EB84A68");
 
             entity.ToTable("PURCHASE_HISTORY");
 
@@ -205,16 +224,21 @@ public partial class ShopEproductionContext : DbContext
 
         modelBuilder.Entity<PurchaseHistoryDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC27E08E37B7");
+            entity.HasKey(e => e.Id).HasName("PK__PURCHASE__3214EC275CF3A797");
 
             entity.ToTable("PURCHASE_HISTORY_DETAILS");
 
             entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DiscountId).HasColumnName("DISCOUNT_ID");
             entity.Property(e => e.HistoryId).HasColumnName("HISTORY_ID");
             entity.Property(e => e.IsBoughtFlg).HasColumnName("IS_BOUGHT_FLG");
             entity.Property(e => e.IsRentedFlg).HasColumnName("IS_RENTED_FLG");
             entity.Property(e => e.PriceAtPurchase).HasColumnName("PRICE_AT_PURCHASE");
             entity.Property(e => e.ProductDetailId).HasColumnName("PRODUCT_DETAIL_ID");
+
+            entity.HasOne(d => d.Discount).WithMany(p => p.PurchaseHistoryDetails)
+                .HasForeignKey(d => d.DiscountId)
+                .HasConstraintName("FK_PurchaseHistoryDetails_Discounts");
 
             entity.HasOne(d => d.History).WithMany(p => p.PurchaseHistoryDetails)
                 .HasForeignKey(d => d.HistoryId)
@@ -226,9 +250,58 @@ public partial class ShopEproductionContext : DbContext
                 .HasConstraintName("FK_PurchaseHistoryDetails_ProductDetails");
         });
 
+        modelBuilder.Entity<RentHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__RENT_HIS__3214EC2746B68047");
+
+            entity.ToTable("RENT_HISTORY");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.UserId).HasColumnName("USER_ID");
+
+            entity.HasOne(d => d.User).WithMany(p => p.RentHistories)
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_RentHistory_Users");
+        });
+
+        modelBuilder.Entity<RentHistoryDetail>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__RENT_HIS__3214EC272CDD37C6");
+
+            entity.ToTable("RENT_HISTORY_DETAILS");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.DiscountId).HasColumnName("DISCOUNT_ID");
+            entity.Property(e => e.Duration)
+                .HasColumnType("datetime")
+                .HasColumnName("DURATION");
+            entity.Property(e => e.ExpiredDate)
+                .HasColumnType("datetime")
+                .HasColumnName("EXPIRED_DATE");
+            entity.Property(e => e.HistoryId).HasColumnName("HISTORY_ID");
+            entity.Property(e => e.Price).HasColumnName("PRICE");
+            entity.Property(e => e.ProductDetailId).HasColumnName("PRODUCT_DETAIL_ID");
+            entity.Property(e => e.RentedDate)
+                .HasColumnType("datetime")
+                .HasColumnName("RENTED_DATE");
+
+            entity.HasOne(d => d.Discount).WithMany(p => p.RentHistoryDetails)
+                .HasForeignKey(d => d.DiscountId)
+                .HasConstraintName("FK_RentHistoryDetails_Discounts");
+
+            entity.HasOne(d => d.History).WithMany(p => p.RentHistoryDetails)
+                .HasForeignKey(d => d.HistoryId)
+                .HasConstraintName("FK_RentHistoryDetails_RentHistory");
+
+            entity.HasOne(d => d.ProductDetail).WithMany(p => p.RentHistoryDetails)
+                .HasForeignKey(d => d.ProductDetailId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_RentHistoryDetails_ProductDetails");
+        });
+
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__ROLES__3214EC278AB87615");
+            entity.HasKey(e => e.Id).HasName("PK__ROLES__3214EC279A9894F6");
 
             entity.ToTable("ROLES");
 
@@ -241,13 +314,13 @@ public partial class ShopEproductionContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__USERS__3214EC2765C0367C");
+            entity.HasKey(e => e.Id).HasName("PK__USERS__3214EC27C5C1E435");
 
             entity.ToTable("USERS");
 
-            entity.HasIndex(e => e.Email, "UQ__USERS__161CF7244C624A65").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__USERS__161CF7240CA60DF3").IsUnique();
 
-            entity.HasIndex(e => e.Username, "UQ__USERS__B15BE12ED584591E").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__USERS__B15BE12E415378FE").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Email)
@@ -288,7 +361,7 @@ public partial class ShopEproductionContext : DbContext
 
         modelBuilder.Entity<WalletHistory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC2794D6499A");
+            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC277B647F5E");
 
             entity.ToTable("WALLET_HISTORY");
 
@@ -307,7 +380,7 @@ public partial class ShopEproductionContext : DbContext
 
         modelBuilder.Entity<WalletHistoryDetail>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC2707BF033F");
+            entity.HasKey(e => e.Id).HasName("PK__WALLET_H__3214EC274DB78AA9");
 
             entity.ToTable("WALLET_HISTORY_DETAILS");
 
@@ -329,6 +402,7 @@ public partial class ShopEproductionContext : DbContext
                 .HasColumnType("decimal(18, 2)")
                 .HasColumnName("PRE_VALUE");
             entity.Property(e => e.PurchaseDetailId).HasColumnName("PURCHASE_DETAIL_ID");
+            entity.Property(e => e.RentDetailId).HasColumnName("RENT_DETAIL_ID");
             entity.Property(e => e.TimeExecution)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
@@ -341,6 +415,10 @@ public partial class ShopEproductionContext : DbContext
             entity.HasOne(d => d.PurchaseDetail).WithMany(p => p.WalletHistoryDetails)
                 .HasForeignKey(d => d.PurchaseDetailId)
                 .HasConstraintName("FK_PURCHASE_HISTORY_DETAILS");
+
+            entity.HasOne(d => d.RentDetail).WithMany(p => p.WalletHistoryDetails)
+                .HasForeignKey(d => d.RentDetailId)
+                .HasConstraintName("FK_RENT_HISTORY_DETAILS");
         });
 
         OnModelCreatingPartial(modelBuilder);
