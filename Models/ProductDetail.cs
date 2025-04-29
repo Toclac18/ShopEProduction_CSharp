@@ -32,4 +32,6 @@ public partial class ProductDetail
     public virtual ICollection<PurchaseHistoryDetail> PurchaseHistoryDetails { get; set; } = new List<PurchaseHistoryDetail>();
 
     public virtual ICollection<RentHistoryDetail> RentHistoryDetails { get; set; } = new List<RentHistoryDetail>();
+
+    public virtual ICollection<RentInProcess> RentInProcesses { get; set; } = new List<RentInProcess>();
 }

@@ -9,5 +9,6 @@ namespace ShopEProduction.Repository.IRepository
         Task<ProductDetail> GetProductDetailByIdAsync(int productDetailId);
         Task<int> FindProductIdByProductDetailId(int productDetailId);
         Task<int> CountRemainQuantity(int productId);
+        Task<bool> UpdateIsRentedFlagAsync(int productDetailId);
     }
 }

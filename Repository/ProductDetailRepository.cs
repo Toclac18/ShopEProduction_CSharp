@@ -39,5 +39,20 @@ namespace ShopEProduction.Repository
         {
             return await _context.ProductDetails.CountAsync(pd => pd.ProductId == productId && pd.Status == true);
         }
+
+        public async Task<bool> UpdateIsRentedFlagAsync(int productDetailId)
+        {
+            var productDetail = await _context.ProductDetails.FindAsync(productDetailId);
+            if (productDetail == null)
+                return false;
+
+            productDetail.IsRentedFlg = true;
+
+            _context.ProductDetails.Update(productDetail);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }

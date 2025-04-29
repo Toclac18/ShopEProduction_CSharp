@@ -155,19 +155,20 @@ CREATE TABLE PURCHASE_HISTORY_DETAILS (
 
 -- create table RENT_IN_PROCESS
 CREATE TABLE RENT_IN_PROCESS (
-	ID INT IDENTITY(1,1),
+	ID INT IDENTITY(1,1) PRIMARY KEY,
 	USER_ID INT NOT NULL,
 	PRODUCT_DETAIL_ID INT NOT NULL,
 	RENTED_DATE DATETIME NOT NULL,
 	EXPIRED_DATE DATETIME NOT NULL, -- RENTED_DATE + DURATION
 	RENTED_TYPE BIT DEFAULT 0 NOT NULL, -- 0 is rent by days, 1 is rent by months
-	DURATION DATETIME, -- convert to days all time. 1 months dedault set = 30 days
+	DURATION INT, -- convert to days all time. 1 months dedault set = 30 days
 	IS_EXTENDED BIT DEFAULT 0, -- Mark as if product in rented process is extended for more or not. Only if this flag and IS_EXPIRED = 1 then record will be in history table
 	IS_EXPIRED BIT DEFAULT 0, -- this flag is set to 1 if and only if flag IS_EXTENDED = 0.
 	CONSTRAINT FK_RentInProcess_ProductDetails FOREIGN KEY (PRODUCT_DETAIL_ID) 
         REFERENCES PRODUCT_DETAILS(ID)
 );
-
+--UPDATE RENT_IN_PROCESS
+--SET DURATION = DATEDIFF(DAY, RENTED_DATE, EXPIRED_DATE);
 --DROP TABLE RENT_HISTORY;
 -- RENT_HISTORY table
 CREATE TABLE RENT_HISTORY (
@@ -317,3 +318,5 @@ WHERE USER_ID = 5
 
 SELECT * FROM PURCHASE_HISTORY
 WHERE USER_ID = 5
+
+select * from RENT_IN_PROCESS

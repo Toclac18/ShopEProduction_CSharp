@@ -75,6 +75,12 @@
             </div>
         </div>
     }
+    else if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-danger text-center">
+            @TempData["SuccessMessage"]
+        </div>
+    }
 
     <div class="container mt-5">
         <h2 class="text-center mb-4 text-primary">🛍️ All Products</h2>
